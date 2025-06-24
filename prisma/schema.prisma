@@ -1,0 +1,149 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+//ユーザー登録テーブル
+model User {
+  id             Int          @id @default(autoincrement())
+  supabaseUserId String       @unique
+  createdAt      DateTime     @default(now())
+  updatedAt      DateTime     @updatedAt
+  pets           Pet[]
+  medications    Medication[]
+  families       Family[]
+}
+
+//ペット登録テーブル
+model Pet {
+  id                  Int                  @id @default(autoincrement())
+  userId              Int
+  name                String
+  species             String
+  gender              String
+  birthday            DateTime
+  adoptedAt           DateTime
+  imageUrl            String?
+  createdAt           DateTime             @default(now())
+  updatedAt           DateTime             @updatedAt
+  user                User                 @relation(fields: [userId], references: [id])
+  medicationSchedules MedicationSchedule[]
+  medicationRecords   MedicationRecord[]
+}
+
+//薬登録テーブル
+model Medication {
+  id                Int                      @id @default(autoincrement())
+  userId            Int
+  name              String
+  form              Form
+  color             String
+  createdAt         DateTime                 @default(now())
+  updatedAt         DateTime                 @updatedAt
+  user              User                     @relation(fields: [userId], references: [id])
+  scheduleLinks     MedicationScheduleLink[]
+  medicationRecords MedicationRecord[]
+}
+
+//薬形状
+enum Form {
+  TABLET
+  ROUNDTABLET
+  EYEDROP
+  POWDER
+}
+
+//MedicationとMedicationSchedule中間テーブル
+model MedicationScheduleLink {
+  id                   Int                @id @default(autoincrement())
+  medicationId         Int
+  medicationScheduleId Int
+  createdAt            DateTime           @default(now())
+  updatedAt            DateTime           @updatedAt
+  medication           Medication         @relation(fields: [medicationId], references: [id])
+  medicationSchedule   MedicationSchedule @relation(fields: [medicationScheduleId], references: [id], onDelete: Cascade)
+}
+
+//薬スケジュールテーブル
+model MedicationSchedule {
+  id                      Int                      @id @default(autoincrement())
+  petId                   Int
+  dayType                 DayType
+  weekday                 Weekday?
+  createdAt               DateTime                 @default(now())
+  updatedAt               DateTime                 @updatedAt
+  pet                     Pet                      @relation(fields: [petId], references: [id], onDelete: Cascade)
+  medicationScheduleLinks MedicationScheduleLink[]
+  medicationScheduleTimes MedicationScheduleTime[]
+  familyChecks            FamilyCheck[]
+}
+
+//毎日or週週の特定の曜日
+enum DayType {
+  DAILY
+  WEEKLY
+}
+
+//曜日
+enum Weekday {
+  MON
+  TUE
+  WED
+  THU
+  FRI
+  SAT
+  SUN
+}
+
+//薬投薬時間テーブル
+model MedicationScheduleTime {
+  id                   Int                @id @default(autoincrement())
+  medicationScheduleId Int
+  time                 DateTime
+  createdAt            DateTime           @default(now())
+  updatedAt            DateTime           @updatedAt
+  medicationSchedule   MedicationSchedule @relation(fields: [medicationScheduleId], references: [id], onDelete: Cascade)
+}
+
+//MedicationScheduleとFamily中間テーブル
+model FamilyCheck {
+  id                   Int                @id @default(autoincrement())
+  familyId             Int
+  medicationScheduleId Int
+  createdAt            DateTime           @default(now())
+  updatedAt            DateTime           @updatedAt
+  medicationSchedule   MedicationSchedule @relation(fields: [medicationScheduleId], references: [id], onDelete: Cascade)
+  family               Family             @relation(fields: [familyId], references: [id])
+}
+
+//家族テーブル
+model Family {
+  id                Int                @id @default(autoincrement())
+  userId            Int
+  name              String
+  color             String
+  createdAt         DateTime           @default(now())
+  updatedAt         DateTime           @updatedAt
+  user              User               @relation(fields: [userId], references: [id])
+  medicationRecords MedicationRecord[]
+  familyChecks      FamilyCheck[]
+}
+
+//服薬記録テーブル
+model MedicationRecord {
+  id           Int        @id @default(autoincrement())
+  familyId     Int
+  medicationId Int
+  petId        Int
+  givenAt      DateTime
+  createdAt    DateTime   @default(now())
+  updatedAt    DateTime   @updatedAt
+  family       Family     @relation(fields: [familyId], references: [id])
+  medication   Medication @relation(fields: [medicationId], references: [id])
+  pet          Pet        @relation(fields: [petId], references: [id], onDelete: Cascade)
+}
