@@ -8,13 +8,10 @@ import LockIcon from "@assets/icons/auth/lock.svg";
 import { FormInput } from "../_components/FormInput";
 import { FormButton } from "../_components/FormButton";
 
+type Mode = "signup" | "login";
+
 type AuthFormProps = {
-  title: string;
-  buttonText: string;
-  linkText?: string;
-  linkHref?: string;
-  linkLabel?: string;
-  isLinkSeparate?: boolean;
+  mode: Mode;
   onSubmit: (data: AuthFormData) => void;
   register: any;
   handleSubmit: (
@@ -25,12 +22,7 @@ type AuthFormProps = {
 };
 
 export const AuthForm: React.FC<AuthFormProps> = ({
-  title,
-  buttonText,
-  linkText,
-  linkHref,
-  linkLabel,
-  isLinkSeparate = false,
+  mode,
   onSubmit,
   register,
   handleSubmit,
@@ -40,6 +32,16 @@ export const AuthForm: React.FC<AuthFormProps> = ({
   //パスワード表示/非表示切り替え
   const [showPassword, setShowPassword] = useState(false);
   const router = useRouter();
+  //modeによる出し分け
+  const isSignup = mode === "signup";
+  const title = isSignup ? "ユーザー登録" : "ログイン";
+  const buttonText = isSignup ? "登録" : "ログイン";
+  const linkText = isSignup
+    ? "すでにアカウントをお持ちですか？"
+    : "アカウントをお持ちでない方はこちら";
+  const linkHref = isSignup ? "/login" : "/signup";
+  const isLinkSeparate = isSignup;
+  const linkLabel = isSignup ? "ログイン" : "";
   return (
     <div className="bg-lightPink min-h-screen flex justify-center items-start py-10">
       <div className="max-w-[450px] text-textMain ">

@@ -8,17 +8,12 @@ const SignUpPage: React.FC = () => {
     useAuthForm("signup");
   return (
     <AuthForm
-      title="ユーザー登録"
-      buttonText="登録"
+      mode="signup"
       onSubmit={onSubmit}
       register={register}
       handleSubmit={handleSubmit}
       errors={errors}
-      linkText="すでにアカウントをお持ちですか？"
-      linkLabel="ログイン"
-      linkHref="/login"
       isSubmitting={isSubmitting}
-      isLinkSeparate={true}
     />
   );
 };
