@@ -1,11 +1,11 @@
 "use client";
 
 import { AuthForm } from "../_components/AuthForm";
-import { useFormLogic } from "../_hooks/useFormLogic";
+import { useAuthForm } from "../_hooks/useAuthForm";
 
 const SignUpPage: React.FC = () => {
   const { register, handleSubmit, errors, isSubmitting, onSubmit } =
-    useFormLogic("signup");
+    useAuthForm("signup");
   return (
     <AuthForm
       title="ユーザー登録"

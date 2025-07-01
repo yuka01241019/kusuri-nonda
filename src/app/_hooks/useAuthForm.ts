@@ -9,7 +9,7 @@ import { AuthFormData, authSchema } from "../_lib/authSchema";
 type Mode = "signup" | "login";
 
 //認証関連のロジック（useForm,onSubmit,バリデーション）
-export const useFormLogic = (mode: Mode) => {
+export const useAuthForm = (mode: Mode) => {
   const {
     register,
     handleSubmit,
