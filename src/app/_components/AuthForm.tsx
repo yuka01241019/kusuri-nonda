@@ -60,7 +60,7 @@ export const AuthForm: React.FC<AuthFormProps> = ({
                   Icon={MailIcon}
                   placeholder="mail@example.com"
                   error={errors.email?.message}
-                  register={register}
+                  {...register("email")}
                   disabled={isSubmitting}
                 />
                 <FormInput
@@ -70,7 +70,7 @@ export const AuthForm: React.FC<AuthFormProps> = ({
                   Icon={LockIcon}
                   placeholder="パスワード(6文字以上)"
                   error={errors.password?.message}
-                  register={register}
+                  {...register("password")}
                   disabled={isSubmitting}
                   showToggleIcon
                   showPassword={showPassword}
