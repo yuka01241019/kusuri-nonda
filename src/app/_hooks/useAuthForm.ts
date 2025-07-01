@@ -19,6 +19,7 @@ export const useAuthForm = (mode: Mode) => {
     mode: "onSubmit",
   });
   const router = useRouter();
+  const redirectUrl = process.env.NEXT_PUBLIC_REDIRECT_URL;
   const onSubmit = async (data: AuthFormData) => {
     const { email, password } = data;
     let error = null;
@@ -27,7 +28,7 @@ export const useAuthForm = (mode: Mode) => {
         email,
         password,
         options: {
-          emailRedirectTo: "http://localhost:3000/login",
+          emailRedirectTo: `${redirectUrl}/login`,
         },
       });
       error = res.error;
