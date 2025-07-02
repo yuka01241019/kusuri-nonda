@@ -38,6 +38,7 @@ export const FormInput = forwardRef<HTMLInputElement, FormInputProps>(
           <input
             id={id}
             ref={ref}
+            {...inputProps}
             type={
               showToggleIcon
                 ? showPassword
@@ -50,7 +51,6 @@ export const FormInput = forwardRef<HTMLInputElement, FormInputProps>(
             } text-base rounded-[8px] px-2.5 ${
               showToggleIcon ? "pr-10" : ""
             } py-2 bg-lightPink mt-[4px]`}
-            {...inputProps}
           />
           {showToggleIcon && onTogglePassword && (
             <span
