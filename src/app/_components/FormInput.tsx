@@ -7,7 +7,7 @@ import { forwardRef } from "react";
 type FormInputProps = {
   id: string;
   label: string;
-  Icon: React.FC<React.SVGProps<SVGSVGElement>>;
+  Icon?: React.FC<React.SVGProps<SVGSVGElement>>;
   error?: string;
   showToggleIcon?: boolean;
   showPassword?: boolean;
@@ -31,7 +31,7 @@ export const FormInput = forwardRef<HTMLInputElement, FormInputProps>(
     return (
       <div className="w-full mb-2">
         <label htmlFor={id} className="flex items-center gap-[1px] text-small">
-          <Icon />
+          {Icon && <Icon />}
           {label}
         </label>
         <div className="relative">
