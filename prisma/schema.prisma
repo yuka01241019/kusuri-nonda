@@ -26,8 +26,8 @@ model Pet {
   name                String
   species             String
   gender              String
-  birthday            DateTime
-  adoptedAt           DateTime
+  birthday            DateTime?
+  adoptedAt           DateTime?
   imageUrl            String?
   createdAt           DateTime             @default(now())
   updatedAt           DateTime             @updatedAt
