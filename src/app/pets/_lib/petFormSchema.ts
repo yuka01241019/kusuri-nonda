@@ -7,15 +7,17 @@ export const petFormSchema = z.object({
   gender: z.union([
     z.literal("おとこのこ♂"),
     z.literal("おんなのこ♀"),
-    z.literal(""),
+    z.null(),
   ]),
   birthday: z.union([
     z.literal(""),
     z.string().min(1, "日付を選択してください"),
+    z.null(),
   ]),
   adoptedAt: z.union([
     z.literal(""),
     z.string().min(1, "日付を選択してください"),
+    z.null(),
   ]),
 
   imageUrl: z.string().optional(),
