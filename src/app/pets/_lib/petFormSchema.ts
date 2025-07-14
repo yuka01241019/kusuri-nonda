@@ -7,6 +7,7 @@ export const petFormSchema = z.object({
   gender: z.union([
     z.literal("おとこのこ♂"),
     z.literal("おんなのこ♀"),
+    z.literal(""),
     z.null(),
   ]),
   birthday: z.union([
@@ -20,7 +21,7 @@ export const petFormSchema = z.object({
     z.null(),
   ]),
 
-  imageUrl: z.string().optional(),
+  imagePath: z.string().optional(),
 });
 
 export type PetFormData = z.infer<typeof petFormSchema>;

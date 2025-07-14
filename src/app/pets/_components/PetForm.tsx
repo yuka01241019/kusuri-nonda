@@ -29,12 +29,15 @@ export const PetForm: React.FC = () => {
       gender: null,
       birthday: null,
       adoptedAt: null,
-      imageUrl: "",
+      imagePath: "",
     },
   });
   const onSubmit = async (data: PetFormData) => {
     try {
-      await createPet(data);
+      await createPet({
+        ...data,
+        gender: data.gender === "" ? null : data.gender,
+      });
       toast.success("ペットを登録しました！");
       router.push("/dashboard");
     } catch (error) {
@@ -57,12 +60,12 @@ export const PetForm: React.FC = () => {
             <form onSubmit={handleSubmit(onSubmit)}>
               <div className="w-full max-w-[390px]">
                 <PetImageUpload
-                  imagePath={watch("imageUrl")}
-                  onChange={(key) => setValue("imageUrl", key)}
-                  error={errors.imageUrl?.message}
+                  imagePath={watch("imagePath")}
+                  onChange={(key) => setValue("imagePath", key)}
+                  error={errors.imagePath?.message}
                   disabled={isSubmitting}
                 />
-                <input type="hidden" {...register("imageUrl")} />
+                <input type="hidden" {...register("imagePath")} />
 
                 <FormInput
                   id="name"
