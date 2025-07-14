@@ -4,5 +4,5 @@ export type CreatePetRequest = {
   gender: "おとこのこ♂" | "おんなのこ♀" | null;
   birthday: string | null;
   adoptedAt: string | null;
-  imageUrl?: string;
+  imagePath?: string;
 };
