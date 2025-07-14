@@ -29,7 +29,7 @@ export const FormInput = forwardRef<HTMLInputElement, FormInputProps>(
     ref
   ) => {
     return (
-      <div className="w-full mb-2">
+      <div className="w-full mb-0.5">
         <label htmlFor={id} className="flex items-center gap-[1px] text-small">
           {Icon && <Icon />}
           {label}
