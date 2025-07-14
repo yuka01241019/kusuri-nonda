@@ -25,6 +25,10 @@ export const useAuthForm = (mode: Mode) => {
   const onSubmit = async (data: AuthFormData) => {
     const { email, password } = data;
     let error = null;
+    //送信中トースト表示
+    const toastId = toast.loading(
+      mode === "signup" ? "登録中です..." : "ログイン中です..."
+    );
     if (mode === "signup") {
       const res = await supabase.auth.signUp({
         email,
@@ -66,16 +70,49 @@ export const useAuthForm = (mode: Mode) => {
     }
     if (error) {
       toast.error(
-        mode === "signup" ? "登録に失敗しました" : "ログインに失敗しました"
+        mode === "signup" ? "登録に失敗しました" : "ログインに失敗しました",
+        { id: toastId }
       );
       return;
     }
     if (mode === "signup") {
-      toast.success("登録が完了しました！メールを確認してください！");
+      toast.success("登録が完了しました！メールを確認してください！", {
+        id: toastId,
+      });
       router.push("/login");
     } else {
-      toast.success("ログインに成功しました！");
-      router.replace("/pets/new");
+      toast.success("ログインに成功しました！", { id: toastId });
+      //ログイン後のペットチェック
+      try {
+        const {
+          data: { user },
+          error: userError,
+        } = await supabase.auth.getUser();
+        if (userError || !user) {
+          throw new Error("ユーザー情報の取得に失敗しました");
+        }
+        const sessionRes = await supabase.auth.getSession();
+        const token = sessionRes.data.session?.access_token;
+        //GETリクエスト
+        const petRes = await fetch("/api/pets", {
+          headers: {
+            Authorization: token ?? "",
+          },
+        });
+        const petData = await petRes.json();
+        if (petRes.ok) {
+          const petCount = petData.pets?.length || 0;
+          router.replace(petCount === 0 ? "/pets/new" : "/dashboard");
+        } else {
+          throw new Error(petData.message || "ペット情報の取得に失敗しました");
+        }
+      } catch (error) {
+        if (error instanceof Error) {
+          toast.error(error.message);
+        } else {
+          toast.error("予期せぬエラーが発生しました");
+        }
+      }
     }
   };
   return { register, handleSubmit, errors, isSubmitting, onSubmit };
