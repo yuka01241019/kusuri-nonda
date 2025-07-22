@@ -59,17 +59,12 @@ export const GET = async (request: NextRequest) => {
     return NextResponse.json({ status: error?.message }, { status: 400 });
   }
   try {
-    const dbUser = await prisma.user.findUnique({
-      where: { supabaseUserId: data.user.id },
-    });
-    if (!dbUser) {
-      return NextResponse.json(
-        { message: "ユーザーが見つかりません" },
-        { status: 400 }
-      );
-    }
     const pets = await prisma.pet.findMany({
-      where: { userId: dbUser.id },
+      where: {
+        user: {
+          supabaseUserId: data.user.id,
+        },
+      },
       orderBy: { createdAt: "desc" },
     });
     return NextResponse.json({ pets }, { status: 200 });
