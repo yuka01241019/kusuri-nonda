@@ -1,3 +1,5 @@
+import { getAccessToken } from "./getAccessToken";
+
 //HTTPメソッドの型
 type HttpMethod = "GET" | "POST" | "PUT" | "DELETE";
 
@@ -5,12 +7,9 @@ type HttpMethod = "GET" | "POST" | "PUT" | "DELETE";
 const baseFetch = async <TResponse, TRequest = undefined>(
   method: HttpMethod,
   url: string,
-  body?: TRequest,
-  token?:string
+  body?: TRequest
 ): Promise<TResponse> => {
-  if (!token) {
-    throw new Error("ログイン情報が見つかりません");
-  }
+  const token = await getAccessToken();
   const headers: HeadersInit = {
     "Content-Type": "application/json",
     Authorization: token,
@@ -41,12 +40,10 @@ const baseFetch = async <TResponse, TRequest = undefined>(
 
 //共通化したAPI関数
 export const api = {
-  get: <TResponse>(url: string, token: string) =>
-    baseFetch<TResponse>("GET", url, undefined, token),
-  post: <TResponse, TRequest>(url: string, body: TRequest, token: string) =>
-    baseFetch<TResponse, TRequest>("POST", url, body, token),
-  put: <TResponse, TRequest>(url: string, body: TRequest, token: string) =>
-    baseFetch<TResponse, TRequest>("PUT", url, body, token),
-  delete: <TResponse>(url: string, token: string) =>
-    baseFetch<TResponse>("DELETE", url,undefined,token),
+  get: <TResponse>(url: string) => baseFetch<TResponse>("GET", url),
+  post: <TResponse, TRequest>(url: string, body: TRequest) =>
+    baseFetch<TResponse, TRequest>("POST", url, body),
+  put: <TResponse, TRequest>(url: string, body: TRequest) =>
+    baseFetch<TResponse, TRequest>("PUT", url, body),
+  delete: <TResponse>(url: string) => baseFetch<TResponse>("DELETE", url),
 };

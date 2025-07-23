@@ -11,11 +11,9 @@ import { useCreatePet } from "../_hooks/useCreatePet";
 import { useRouter } from "next/navigation";
 import toast from "react-hot-toast";
 import { PetImageUpload } from "./PetImageUpload";
-import { useSupabaseSession } from "@/app/_hooks/useSupabaseSettion";
 
 export const PetForm: React.FC = () => {
   const { createPet } = useCreatePet();
-  const { token } = useSupabaseSession();
   const router = useRouter();
   const {
     register,
@@ -35,18 +33,11 @@ export const PetForm: React.FC = () => {
     },
   });
   const onSubmit = async (data: PetFormData) => {
-    if (!token) {
-      toast.error("ログイン情報がありません");
-      return;
-    }
     try {
-      await createPet(
-        {
-          ...data,
-          gender: data.gender === "" ? null : data.gender,
-        },
-        token
-      );
+      await createPet({
+        ...data,
+        gender: data.gender === "" ? null : data.gender,
+      });
       toast.success("ペットを登録しました！");
       router.push("/dashboard");
     } catch (error) {
