@@ -33,18 +33,19 @@ export const PetForm: React.FC = () => {
     },
   });
   const onSubmit = async (data: PetFormData) => {
+    const toastId = toast.loading("登録中です…");
     try {
       await createPet({
         ...data,
         gender: data.gender === "" ? null : data.gender,
       });
-      toast.success("ペットを登録しました！");
+      toast.success("ペットを登録しました！", { id: toastId });
       router.push("/dashboard");
     } catch (error) {
       if (error instanceof Error) {
-        toast.error(error.message);
+        toast.error(error.message, { id: toastId });
       } else {
-        toast.error("予期せぬエラーが発生しました");
+        toast.error("予期せぬエラーが発生しました", { id: toastId });
       }
     }
   };
