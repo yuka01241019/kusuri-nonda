@@ -46,6 +46,7 @@ export const PetImageUpload: React.FC<PetImageUploadProps> = ({
     if (!files || files.length === 0) return;
     const file = files[0];
     const filePath = `private/${uuidv4()}`;
+    const toastId = toast.loading("画像をアップロード中…");
     setUploading(true);
 
     const { error } = await supabase.storage
@@ -54,7 +55,7 @@ export const PetImageUpload: React.FC<PetImageUploadProps> = ({
     setUploading(false);
 
     if (error) {
-      toast.error("画像のアップロードに失敗しました");
+      toast.error("画像のアップロードに失敗しました", { id: toastId });
       console.error(error);
       return;
     }
@@ -64,6 +65,7 @@ export const PetImageUpload: React.FC<PetImageUploadProps> = ({
     } = supabase.storage.from("pet-imageurl").getPublicUrl(filePath);
     setPublicUrl(publicUrl);
     onChange(filePath); //imagePathを親に返す
+    toast.success("画像をアップロードしました！", { id: toastId });
   };
   return (
     <div className="w-full flex flex-col items-center">
