@@ -44,9 +44,9 @@ export const AuthForm: React.FC<AuthFormProps> = ({
   const linkLabel = isSignup ? "ログイン" : "";
   return (
     <div className="bg-lightPink min-h-screen flex justify-center items-start py-10">
-      <div className="max-w-[450px] text-textMain ">
+      <div className="w-full flex justify-center text-textMain">
         {/*タイトル～ボタンまで */}
-        <div className=" w-[428px] bg-white rounded-[16px] px-6 py-8  ">
+        <div className=" w-full max-w-[380px] sm:max-w-[420px] md:max-w-[430px] lg:max-w-[450px] bg-white rounded-[16px] px-4 py-6 sm:px-6 sm:py-8 md:px-8 md:py-10 lg:px-8 lg:py-10">
           <div className="my-[60px]">
             <h1 className="text-heading1 text-center font-bold mb-[44px]">
               {title}

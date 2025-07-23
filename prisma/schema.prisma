@@ -25,10 +25,10 @@ model Pet {
   userId              Int
   name                String
   species             String
-  gender              String
-  birthday            DateTime
-  adoptedAt           DateTime
-  imageUrl            String?
+  gender              String?
+  birthday            DateTime?
+  adoptedAt           DateTime?
+  imagePath           String?
   createdAt           DateTime             @default(now())
   updatedAt           DateTime             @updatedAt
   user                User                 @relation(fields: [userId], references: [id])

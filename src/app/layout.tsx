@@ -1,12 +1,13 @@
 import type { Metadata } from "next";
 import "./globals.css";
-import {M_PLUS_1p} from "next/font/google"
+import { M_PLUS_1p } from "next/font/google";
+import { Toaster } from "react-hot-toast";
 
-const mPlus1p =M_PLUS_1p({
-subsets: ["latin"],
-  weight: ["400", "700"], 
+const mPlus1p = M_PLUS_1p({
+  subsets: ["latin"],
+  weight: ["400", "700"],
   display: "swap",
-})
+});
 
 export const metadata: Metadata = {
   title: "薬飲んだ？",
@@ -20,7 +21,10 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="ja" className={mPlus1p.className}>
-      <body>{children}</body>
+      <body>
+        {children}
+        <Toaster position="top-center" />
+      </body>
     </html>
   );
 }

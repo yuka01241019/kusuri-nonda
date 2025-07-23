@@ -7,7 +7,7 @@ import { forwardRef } from "react";
 type FormInputProps = {
   id: string;
   label: string;
-  Icon: React.FC<React.SVGProps<SVGSVGElement>>;
+  Icon?: React.FC<React.SVGProps<SVGSVGElement>>;
   error?: string;
   showToggleIcon?: boolean;
   showPassword?: boolean;
@@ -29,15 +29,16 @@ export const FormInput = forwardRef<HTMLInputElement, FormInputProps>(
     ref
   ) => {
     return (
-      <div className="w-full mb-2">
+      <div className="w-full mb-0.5">
         <label htmlFor={id} className="flex items-center gap-[1px] text-small">
-          <Icon />
+          {Icon && <Icon />}
           {label}
         </label>
         <div className="relative">
           <input
             id={id}
             ref={ref}
+            {...inputProps}
             type={
               showToggleIcon
                 ? showPassword
@@ -50,7 +51,6 @@ export const FormInput = forwardRef<HTMLInputElement, FormInputProps>(
             } text-base rounded-[8px] px-2.5 ${
               showToggleIcon ? "pr-10" : ""
             } py-2 bg-lightPink mt-[4px]`}
-            {...inputProps}
           />
           {showToggleIcon && onTogglePassword && (
             <span
