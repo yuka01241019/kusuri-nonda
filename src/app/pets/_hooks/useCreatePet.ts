@@ -1,4 +1,4 @@
-import { CreatePetRequest } from "@/app/_types/pet/CreatePet";
+import { CreatePetRequest } from "@/app/api/pets/route";
 import { Pet } from "@/app/_types/pet/CreatePet";
 import { api } from "@/utils/api";
 

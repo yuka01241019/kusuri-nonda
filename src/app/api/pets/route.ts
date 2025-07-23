@@ -1,8 +1,17 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/app/_lib/prisma";
-import { CreatePetRequest } from "@/app/_types/pet/CreatePet";
 import { handleApiError } from "@/utils/handleApiError ";
 import { supabase } from "@/utils/supabase";
+
+//クライアント→APIに送られてくるデータ（リクエスト）
+export type CreatePetRequest = {
+  name: string;
+  species: string;
+  gender: "おとこのこ♂" | "おんなのこ♀" | null;
+  birthday: string | null;
+  adoptedAt: string | null;
+  imagePath?: string;
+};
 
 //ペット登録API
 export const POST = async (request: NextRequest) => {
