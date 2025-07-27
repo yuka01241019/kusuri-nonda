@@ -28,6 +28,13 @@ export const POST = async (request: NextRequest) => {
     }
     const body = await request.json();
     const { name, form, color }: CreateMedicationRequest = body;
+    const medication = await prisma.medication.create({
+      data: { userId: dbUser.id, name, form, color },
+    });
+    return NextResponse.json(
+      { message: "薬を登録しました", medication },
+      { status: 200 }
+    );
   } catch (error) {
     return handleApiError(error);
   }
