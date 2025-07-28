@@ -6,6 +6,14 @@ import { supabase } from "@/utils/supabase";
 
 //ユーザー新規作成API
 export const POST = async (request: NextRequest) => {
+  const token = request.headers.get("Authorization") ?? "";
+  const { data, error } = await supabase.auth.getUser(token);
+  if (error || !data?.user) {
+    return NextResponse.json(
+      { message: error?.message || "認証に失敗しました" },
+      { status: 400 }
+    );
+  }
   try {
     const { supabaseUserId }: CreateUserRequest = await request.json();
     //すでに存在するか確認（重複登録防止）
