@@ -42,7 +42,7 @@ model Medication {
   userId            Int
   name              String
   form              Form
-  color             String
+  color             Color?
   createdAt         DateTime                 @default(now())
   updatedAt         DateTime                 @updatedAt
   user              User                     @relation(fields: [userId], references: [id])
@@ -56,6 +56,15 @@ enum Form {
   ROUNDTABLET
   EYEDROP
   POWDER
+}
+
+//薬の色
+enum Color {
+  WHITE
+  RED
+  YELLOW
+  GRAY
+  ORANGE
 }
 
 //MedicationとMedicationSchedule中間テーブル
