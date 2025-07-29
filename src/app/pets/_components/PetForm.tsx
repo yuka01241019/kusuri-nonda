@@ -11,6 +11,7 @@ import { useCreatePet } from "../_hooks/useCreatePet";
 import { useRouter } from "next/navigation";
 import toast from "react-hot-toast";
 import { PetImageUpload } from "./PetImageUpload";
+import PowIcon from "@assets/icons/auth/pow.svg";
 
 export const PetForm: React.FC = () => {
   const { createPet } = useCreatePet();
@@ -106,7 +107,13 @@ export const PetForm: React.FC = () => {
                 />
               </div>
               <div className="mt-[26px] flex justify-center">
-                <FormButton text="登録する" disabled={isSubmitting} />
+                <FormButton
+                  text="登録する"
+                  variant="primary"
+                  icon={<PowIcon />}
+                  showIcon={true}
+                  disabled={isSubmitting}
+                />
               </div>
             </form>
           </div>
