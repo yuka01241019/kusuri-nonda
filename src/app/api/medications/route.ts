@@ -2,11 +2,13 @@ import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/app/_lib/prisma";
 import { handleApiError } from "@/utils/handleApiError ";
 import { supabase } from "@/utils/supabase";
+import { Color } from "@/app/medications/_lib/medicationFormSchema";
+import { Form } from "@/app/medications/_lib/medicationFormSchema";
 
 export type CreateMedicationRequest = {
   name: string;
-  form: "TABLET" | "ROUNDTABLET" | "EYEDROP" | "POWDER";
-  color: string;
+  form: Form;
+  color?: Color;
 };
 
 //薬新規登録API
