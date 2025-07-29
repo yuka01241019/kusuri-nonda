@@ -14,7 +14,7 @@ const config: Config = {
         textMain: "#403B3D",
         lightPink: "#FFF2F2",
         darkPink: "#FFB1AB",
-        submitBtn: "64C2B7",
+        submitBtn: "#64C2B7",
       },
       fontSize: {
         heading1: "24px",
