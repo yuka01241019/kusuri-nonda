@@ -27,7 +27,7 @@ export const MedicationShapeSelector: React.FC<
   return (
     <div className="text-small">
       <p className="mb-2">{label}</p>
-      <div className="flex gap-7 justify-center w-full">
+      <div className="flex gap-8 justify-center w-full">
         {options.map(
           ({ value: optionValue, icon: Icon, label: optionLabel }) => (
             <label
