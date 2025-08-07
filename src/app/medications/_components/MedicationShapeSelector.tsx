@@ -19,10 +19,10 @@ export const MedicationShapeSelector: React.FC<
 > = ({ label, value, onChange, error, disabled }) => {
   //薬形状アイコン一覧(配列にし、mapにて繰り返し表示
   const options = [
-    { value: "TABLET", icon: TabletIcon, label: "錠剤" },
-    { value: "ROUNDTABLET", icon: RoundTabletIcon, label: "錠剤(丸)" },
-    { value: "EYEDROP", icon: EyedropIcon, label: "目薬" },
-    { value: "POWDER", icon: PowderIcon, label: "粉薬" },
+    { value: Form.TABLET, icon: TabletIcon, label: "錠剤" },
+    { value: Form.ROUNDTABLET, icon: RoundTabletIcon, label: "錠剤(丸)" },
+    { value: Form.EYEDROP, icon: EyedropIcon, label: "目薬" },
+    { value: Form.POWDER, icon: PowderIcon, label: "粉薬" },
   ] as const;
   return (
     <div className="text-small">
@@ -58,14 +58,14 @@ export const MedicationShapeSelector: React.FC<
         )}
       </div>
       {error ? (
-          <p className="h-[18px] mt-1 text-[12px] text-red-600 leading-tight">
-            {error}
-          </p>
-        ) : (
-          <p className="h-[18px] mt-1 text-[12px] invisible leading-tight">
-            placeholder
-          </p>
-        )}
+        <p className="h-[18px] mt-1 text-[12px] text-red-600 leading-tight">
+          {error}
+        </p>
+      ) : (
+        <p className="h-[18px] mt-1 text-[12px] invisible leading-tight">
+          placeholder
+        </p>
+      )}
     </div>
   );
 };
