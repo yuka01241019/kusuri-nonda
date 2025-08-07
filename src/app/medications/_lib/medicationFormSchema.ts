@@ -19,8 +19,8 @@ export enum Color {
 export const medicationFormSchema = z
   .object({
     name: z.string().min(1, "薬の名前は必須です"),
-    form: z.nativeEnum(Form).refine((val) => val !== undefined, {
-      message: "薬の形状を選択してください",
+    form: z.nativeEnum(Form, {
+      errorMap: () => ({ message: "薬の形状を選択してください" }),
     }),
     color: z.nativeEnum(Color).optional(),
   })
