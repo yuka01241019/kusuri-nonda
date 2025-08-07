@@ -57,9 +57,15 @@ export const MedicationShapeSelector: React.FC<
           )
         )}
       </div>
-      {error && (
-        <p className="text-red-500 text-xs mt-1 leading-tight">{error}</p>
-      )}
+      {error ? (
+          <p className="h-[18px] mt-1 text-[12px] text-red-600 leading-tight">
+            {error}
+          </p>
+        ) : (
+          <p className="h-[18px] mt-1 text-[12px] invisible leading-tight">
+            placeholder
+          </p>
+        )}
     </div>
   );
 };
