@@ -7,7 +7,7 @@ import { Form } from "@/app/medications/_lib/medicationFormSchema";
 
 export type CreateMedicationRequest = {
   name: string;
-  form: Form;
+  form?: Form;
   color?: Color;
 };
 
@@ -30,6 +30,11 @@ export const POST = async (request: NextRequest) => {
     }
     const body = await request.json();
     const { name, form, color }: CreateMedicationRequest = body;
+    if(!form){
+    return NextResponse.json({ message: "薬の形状が選択されていません" },
+    { status: 400 })
+    }
+    
     const medication = await prisma.medication.create({
       data: { userId: dbUser.id, name, form, color },
     });
