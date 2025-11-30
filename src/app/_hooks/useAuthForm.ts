@@ -6,6 +6,7 @@ import { useRouter } from "next/navigation";
 import { supabase } from "@/utils/supabase";
 import { AuthFormData, authSchema } from "../_lib/authSchema";
 import { CreateUserRequest } from "../_types/user/CreateUser";
+import { useSupabaseSession } from "./useSupabaseSession";
 import toast from "react-hot-toast";
 
 type Mode = "signup" | "login";
@@ -22,6 +23,7 @@ export const useAuthForm = (mode: Mode) => {
   });
   const router = useRouter();
   const redirectUrl = process.env.NEXT_PUBLIC_REDIRECT_URL;
+  const { token } = useSupabaseSession();
   const onSubmit = async (data: AuthFormData) => {
     const { email, password } = data;
     let error = null;
@@ -39,7 +41,7 @@ export const useAuthForm = (mode: Mode) => {
       });
       const { data: signUpData } = res;
       //ユーザーが正常に作成されたらUserテーブルにも登録
-      if (signUpData?.user) {
+      if (signUpData?.user && token) {
         const body: CreateUserRequest = {
           supabaseUserId: signUpData.user.id,
         };
@@ -48,6 +50,7 @@ export const useAuthForm = (mode: Mode) => {
             method: "POST",
             headers: {
               "Content-Type": "application/json",
+              Authorization: token,
             },
             body: JSON.stringify(body),
           });
