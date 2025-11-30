@@ -1,6 +1,6 @@
 "use client";
 
-import { useSupabaseSession } from "@/app/_hooks/useSupabaseSettion";
+import { useSupabaseSession } from "@/app/_hooks/useSupabaseSession";
 import { supabase } from "@/utils/supabase";
 import Link from "next/link";
 import { useEffect, useState } from "react"; // ←追加

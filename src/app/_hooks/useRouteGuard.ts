@@ -1,4 +1,4 @@
-import { useSupabaseSession } from "./useSupabaseSettion";
+import { useSupabaseSession } from "./useSupabaseSession";
 import { useRouter } from "next/navigation";
 import { useEffect } from "react";
 
