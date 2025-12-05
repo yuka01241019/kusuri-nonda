@@ -6,7 +6,6 @@ import { useRouter } from "next/navigation";
 import { supabase } from "@/utils/supabase";
 import { AuthFormData, authSchema } from "../_lib/authSchema";
 import { CreateUserRequest } from "../_types/user/CreateUser";
-import { useSupabaseSession } from "./useSupabaseSession";
 import toast from "react-hot-toast";
 
 type Mode = "signup" | "login";
@@ -23,10 +22,9 @@ export const useAuthForm = (mode: Mode) => {
   });
   const router = useRouter();
   const redirectUrl = process.env.NEXT_PUBLIC_REDIRECT_URL;
-  const { token } = useSupabaseSession();
   const onSubmit = async (data: AuthFormData) => {
     const { email, password } = data;
-    let error = null;
+    let error: unknown = null;
     //送信中トースト表示
     const toastId = toast.loading(
       mode === "signup" ? "登録中です..." : "ログイン中です..."
@@ -39,21 +37,31 @@ export const useAuthForm = (mode: Mode) => {
           emailRedirectTo: `${redirectUrl}/login`,
         },
       });
-      const { data: signUpData } = res;
-      //ユーザーが正常に作成されたらUserテーブルにも登録
-      if (signUpData?.user && token) {
-        const body: CreateUserRequest = {
-          supabaseUserId: signUpData.user.id,
-        };
+      const { error: signUpError } = res;
+      error = signUpError;
+    } else if (mode === "login") {
+      const res = await supabase.auth.signInWithPassword({ email, password });
+      error = res.error;
+      //ログイン成功後にUserテーブルにも登録(or 既にあればなにもしない)
+      if (!res.error) {
         try {
-          await fetch("/api/users", {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-              Authorization: token,
-            },
-            body: JSON.stringify(body),
-          });
+          const { data: userData, error: userError } =
+            await supabase.auth.getUser();
+          const sessionRes = await supabase.auth.getSession();
+          const token = sessionRes.data.session?.access_token;
+          if (!userError && userData.user && token) {
+            const body: CreateUserRequest = {
+              supabaseUserId: userData.user.id,
+            };
+            await fetch("/api/users", {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+                Authorization: token,
+              },
+              body: JSON.stringify(body),
+            });
+          }
         } catch (error) {
           if (error instanceof Error) {
             console.error(
