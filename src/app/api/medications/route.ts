@@ -2,8 +2,8 @@ import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/app/_lib/prisma";
 import { handleApiError } from "@/utils/handleApiError ";
 import { supabase } from "@/utils/supabase";
-import { Color } from "@/app/medications/_lib/medicationFormSchema";
-import { Form } from "@/app/medications/_lib/medicationFormSchema";
+import { Color } from "@/app/(main)/medications/_lib/medicationFormSchema";
+import { Form } from "@/app/(main)/medications/_lib/medicationFormSchema";
 
 export type CreateMedicationRequest = {
   name: string;
@@ -30,11 +30,13 @@ export const POST = async (request: NextRequest) => {
     }
     const body = await request.json();
     const { name, form, color }: CreateMedicationRequest = body;
-    if(!form){
-    return NextResponse.json({ message: "薬の形状が選択されていません" },
-    { status: 400 })
+    if (!form) {
+      return NextResponse.json(
+        { message: "薬の形状が選択されていません" },
+        { status: 400 }
+      );
     }
-    
+
     const medication = await prisma.medication.create({
       data: { userId: dbUser.id, name, form, color },
     });

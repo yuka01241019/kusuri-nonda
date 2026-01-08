@@ -1,4 +1,7 @@
-import { Form, Color } from "@/app/medications/_lib/medicationFormSchema";
+import {
+  Form,
+  Color,
+} from "@/app/(main)/medications/_lib/medicationFormSchema";
 
 //サーバーから帰ってくるデータ（レスポンス）
 export type Medication = {
