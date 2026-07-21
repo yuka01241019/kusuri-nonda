@@ -1,3 +1,4 @@
+import { Footer } from "@/app/_components/Footer";
 import { Header } from "../../_components/Header";
 
 export default function MedicationsLayout({
@@ -6,7 +7,8 @@ export default function MedicationsLayout({
   return (
     <>
       <Header />
-      <main className="pt-[80px]">{children}</main>
+      <main>{children}</main>
+      <Footer />
     </>
   );
 }
