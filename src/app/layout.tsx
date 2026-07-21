@@ -21,8 +21,10 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="ja" className={mPlus1p.className}>
-      <body>
-        {children}
+      <body className="min-h-screen bg-white">
+        <div className="mx-auto min-h-screen w-full max-w-[520px] bg-white relative shadow-xl">
+          {children}
+        </div>
         <Toaster position="top-center" />
       </body>
     </html>
