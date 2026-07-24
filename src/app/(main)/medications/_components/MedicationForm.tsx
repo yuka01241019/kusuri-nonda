@@ -12,11 +12,10 @@ import { useRouter } from "next/navigation";
 import { MedicationShapeSelector } from "./MedicationShapeSelector";
 import { FormButton } from "@/app/_components/FormButton";
 import toast from "react-hot-toast";
-import { useCreateMedication } from "../_hooks/useCreateMedication";
+import { createMedication } from "..//_lib/createMedication";
 import { MedicationColorSelector } from "./MedicationColorSelector";
 
 export const MedicationForm: React.FC = () => {
-  const { createMedication } = useCreateMedication();
   const router = useRouter();
   const {
     register,
