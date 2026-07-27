@@ -25,7 +25,7 @@ export const POST = async (request: NextRequest) => {
     if (!dbUser) {
       return NextResponse.json(
         { message: "ユーザーが見つかりません" },
-        { status: 400 }
+        { status: 400 },
       );
     }
     const body = await request.json();
@@ -33,7 +33,7 @@ export const POST = async (request: NextRequest) => {
     if (!form) {
       return NextResponse.json(
         { message: "薬の形状が選択されていません" },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -42,7 +42,7 @@ export const POST = async (request: NextRequest) => {
     });
     return NextResponse.json(
       { message: "薬を登録しました", medication },
-      { status: 200 }
+      { status: 200 },
     );
   } catch (error) {
     return handleApiError(error);
@@ -63,14 +63,34 @@ export const GET = async (request: NextRequest) => {
     if (!dbUser) {
       return NextResponse.json(
         { message: "ユーザーが見つかりません" },
-        { status: 400 }
+        { status: 400 },
       );
     }
-    const medications = await prisma.medication.findMany({
-      where: { userId: dbUser.id },
-      orderBy: { createdAt: "desc" },
-    });
-    return NextResponse.json({ medications }, { status: 200 });
+    //URLからpageを取得
+    //指定されていなければ1ページ目にする
+    const page = parseInt(request.nextUrl.searchParams.get("page") ?? "1");
+    //1ページあたりの件数
+    const pageSize = 10;
+    // 最初の何件を飛ばすか定義
+    const skip = (page - 1) * pageSize;
+    //薬一覧と薬の総件数を同時に取得
+    const [medications, totalCount] = await Promise.all([
+      prisma.medication.findMany({
+        where: { userId: dbUser.id },
+        orderBy: { createdAt: "desc" },
+        skip,
+        take: pageSize,
+      }),
+      prisma.medication.count({
+        where: { userId: dbUser.id },
+      }),
+    ]);
+    //全部で何ページあるか
+    const totalPages = Math.ceil(totalCount / pageSize);
+    return NextResponse.json(
+      { medications, pagination: { page, pageSize, totalCount, totalPages } },
+      { status: 200 },
+    );
   } catch (error) {
     return handleApiError(error);
   }
