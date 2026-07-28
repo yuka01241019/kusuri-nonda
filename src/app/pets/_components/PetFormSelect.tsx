@@ -1,6 +1,7 @@
 "use client";
 
 import { forwardRef } from "react";
+import TriangleIcon from "@assets/icons/pet/triangle.svg";
 
 type PetFormSelectProps = {
   label: string;
@@ -20,7 +21,7 @@ export const PetFormSelect = forwardRef<HTMLSelectElement, PetFormSelectProps>(
           <select
             ref={ref}
             {...selectProps}
-            className={`w-full h-[44px] border ${
+            className={`appearance-none w-full h-[44px] border ${
               error ? "border-red-500" : "border-textMain"
             } text-base rounded-[8px] px-2.5  py-2 bg-lightPink mt-[4px]`}
           >
@@ -31,6 +32,9 @@ export const PetFormSelect = forwardRef<HTMLSelectElement, PetFormSelectProps>(
               </option>
             ))}
           </select>
+          <div className="pointer-events-none absolute right-2 top-1/2 transform -translate-y-1/2 text-gray-500 text-sm">
+            <TriangleIcon />
+          </div>
         </div>
         {error ? (
           <p className="h-[18px] mt-1 text-[12px] text-red-600 leading-tight">

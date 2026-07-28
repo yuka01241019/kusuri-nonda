@@ -12,6 +12,7 @@ type FormInputProps = {
   showToggleIcon?: boolean;
   showPassword?: boolean;
   onTogglePassword?: () => void;
+  className?: string;
 } & React.ComponentProps<"input">;
 
 export const FormInput = forwardRef<HTMLInputElement, FormInputProps>(
@@ -50,7 +51,7 @@ export const FormInput = forwardRef<HTMLInputElement, FormInputProps>(
               error ? "border-red-500" : "border-textMain"
             } text-base rounded-[8px] px-2.5 ${
               showToggleIcon ? "pr-10" : ""
-            } py-2 bg-lightPink mt-[4px]`}
+            } py-2 mt-[4px] ${inputProps.className || "bg-lightPink"}`}
           />
           {showToggleIcon && onTogglePassword && (
             <span

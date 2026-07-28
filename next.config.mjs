@@ -4,7 +4,7 @@ const nextConfig = {
     remotePatterns: [
       {
         protocol: "https",
-        hostname: "phlkbngbmkxxtyqvqgdu.supabase.co",
+        hostname: "ccnsbkxeslwnlhnfpfpl.supabase.co",
         pathname: "/storage/v1/object/public/**", // publicバケット内の全てを許可
       },
     ],
