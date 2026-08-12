@@ -13,3 +13,11 @@ export type Medication = {
   createdAt: string;
   updatedAt: string;
 };
+
+//ページ情報の型
+export type Pagination = {
+  page: number;
+  pageSize: number;
+  totalCount: number;
+  totalPages: number;
+};
