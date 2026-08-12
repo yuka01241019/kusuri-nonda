@@ -21,3 +21,9 @@ export type Pagination = {
   totalCount: number;
   totalPages: number;
 };
+
+//GET全体のレスポンス
+export type GetMedicationsResponse = {
+  medications: Medication[];
+  pagination: Pagination;
+};
