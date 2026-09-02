@@ -24,7 +24,13 @@ const MedicationList = () => {
     };
     fetchMedications();
   }, []);
-  return <p>薬一覧</p>;
+  return (
+    <div>
+      {medications.map((medication) => {
+        return <p key={medication.id}>{medication.name}</p>;
+      })}
+    </div>
+  );
 };
 
 export default MedicationList;
