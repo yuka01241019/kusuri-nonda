@@ -1,36 +1,15 @@
 "use client";
-import {
-  GetMedicationsResponse,
-  Medication,
-} from "@/app/_types/medication/CreateMedication";
-import { api } from "@/utils/api";
-import { useEffect, useState } from "react";
 
-const MedicationList = () => {
-  //GETした薬一覧の状態を管理
-  const [medications, setMedications] = useState<Medication[]>([]);
+import { useRouteGuard } from "@/app/_hooks/useRouteGuard";
+import MedicationList from "./_components/MedicationList";
 
-  useEffect(() => {
-    const fetchMedications = async () => {
-      const response = await api.get<GetMedicationsResponse>(
-        "/api/medications?page=1",
-      );
-      setMedications(response.medications);
-      console.log(
-        response.medications.map((medication) => {
-          return medication.name;
-        }),
-      );
-    };
-    fetchMedications();
-  }, []);
+const MedicationPage: React.FC = () => {
+  useRouteGuard();
   return (
     <div>
-      {medications.map((medication) => {
-        return <p key={medication.id}>{medication.name}</p>;
-      })}
+      <MedicationList />
     </div>
   );
 };
 
-export default MedicationList;
+export default MedicationPage;
