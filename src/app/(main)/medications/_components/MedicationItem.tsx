@@ -27,7 +27,10 @@ export const MedicationItem: React.FC<MedicationItemProps> = ({
   medication,
   isLast,
 }) => {
-  const tabletIconMap = {
+  const tabletIconMap: Record<
+    Color,
+    React.FC<React.SVGProps<SVGSVGElement>>
+  > = {
     [Color.WHITE]: WhiteTabletIcon,
     [Color.RED]: RedTabletIcon,
     [Color.YELLOW]: YellowTabletIcon,
