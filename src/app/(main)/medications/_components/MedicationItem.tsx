@@ -37,24 +37,39 @@ export const MedicationItem: React.FC<MedicationItemProps> = ({
     [Color.GRAY]: GrayTabletIcon,
     [Color.ORANGE]: OrangeTabletIcon,
   };
+  const roundTabletIconMap: Record<
+    Color,
+    React.FC<React.SVGProps<SVGSVGElement>>
+  > = {
+    [Color.WHITE]: WhiteRoundTabletIcon,
+    [Color.RED]: RedRoundTabletIcon,
+    [Color.YELLOW]: YellowRoundTabletIcon,
+    [Color.GRAY]: GrayRoundTabletIcon,
+    [Color.ORANGE]: OrangeRoundTabletIcon,
+  };
 
   let icon = null;
   if (medication.form === "POWDER") {
-    icon = <PowderIcon />;
+    icon = <PowderIcon className="w-6 h-6" />;
   } else if (medication.form === "EYEDROP") {
-    icon = <EyedropIcon />;
+    icon = <EyedropIcon className="w-6 h-6" />;
   } else if (medication.form === "TABLET" && medication.color !== null) {
     const Icon = tabletIconMap[medication.color];
-    icon = <Icon />;
+    icon = <Icon className="w-6 h-6" />;
+  } else if (medication.form === "ROUNDTABLET" && medication.color !== null) {
+    const Icon = roundTabletIconMap[medication.color];
+    icon = <Icon className="w-6 h-6" />;
   }
   return (
     <div
       className={`pb-5 pt-2 ${isLast ? "" : "border-b-[1.25px] border-gray-300 "}`}
     >
-      {icon}
-      {medication.form}
-      {medication.name}
-      {medication.color}
+      <div className="flex items-center gap-2">
+        {icon}
+        {/* {medication.form} */}
+        {medication.name}
+        {/* {medication.color} */}
+      </div>
     </div>
   );
 };
