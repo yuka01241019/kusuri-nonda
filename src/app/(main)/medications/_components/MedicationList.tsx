@@ -2,6 +2,7 @@
 import {
   GetMedicationsResponse,
   Medication,
+  Pagination,
 } from "@/app/_types/medication/CreateMedication";
 import { api } from "@/utils/api";
 import { useEffect, useState } from "react";
@@ -13,6 +14,7 @@ import AddIcon from "@assets/icons/medication/add/add.svg";
 const MedicationList = () => {
   //GETした薬一覧の状態を管理
   const [medications, setMedications] = useState<Medication[]>([]);
+  const [pagination, setPagination] = useState<Pagination | null>(null);
   const router = useRouter();
   useEffect(() => {
     const fetchMedications = async () => {
@@ -20,11 +22,7 @@ const MedicationList = () => {
         "/api/medications?page=1",
       );
       setMedications(response.medications);
-      console.log(
-        response.medications.map((medication) => {
-          return medication.name;
-        }),
-      );
+      setPagination(response.pagination);
     };
     fetchMedications();
   }, []);
@@ -58,7 +56,7 @@ const MedicationList = () => {
               variant="secondary"
               showIcon={true}
               icon={<AddIcon />}
-              onClick={()=> router.push("/medications/new")}
+              onClick={() => router.push("/medications/new")}
             />
           </div>
         </div>
