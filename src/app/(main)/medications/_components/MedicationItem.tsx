@@ -50,15 +50,15 @@ export const MedicationItem: React.FC<MedicationItemProps> = ({
 
   let icon = null;
   if (medication.form === "POWDER") {
-    icon = <PowderIcon className="w-6 h-6" />;
+    icon = <PowderIcon className="w-5 h-5" />;
   } else if (medication.form === "EYEDROP") {
-    icon = <EyedropIcon className="w-6 h-6" />;
+    icon = <EyedropIcon className="w-5 h-5" />;
   } else if (medication.form === "TABLET" && medication.color !== null) {
     const Icon = tabletIconMap[medication.color];
-    icon = <Icon className="w-6 h-6" />;
+    icon = <Icon className="w-5 h-5" />;
   } else if (medication.form === "ROUNDTABLET" && medication.color !== null) {
     const Icon = roundTabletIconMap[medication.color];
-    icon = <Icon className="w-6 h-6" />;
+    icon = <Icon className="w-5 h-5" />;
   }
   return (
     <div
