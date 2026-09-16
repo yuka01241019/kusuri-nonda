@@ -5,12 +5,15 @@ import {
 } from "@/app/_types/medication/CreateMedication";
 import { api } from "@/utils/api";
 import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
 import { MedicationItem } from "./MedicationItem";
+import { FormButton } from "@/app/_components/FormButton";
+import AddIcon from "@assets/icons/medication/add/add.svg";
 
 const MedicationList = () => {
   //GETした薬一覧の状態を管理
   const [medications, setMedications] = useState<Medication[]>([]);
-
+  const router = useRouter();
   useEffect(() => {
     const fetchMedications = async () => {
       const response = await api.get<GetMedicationsResponse>(
@@ -28,7 +31,7 @@ const MedicationList = () => {
   return (
     <div className="text-small">
       <div className="bg-lightPink min-h-screen flex justify-center items-start py-10">
-        <div className="w-full flex justify-center text-textMain">
+        <div className="w-full flex flex-col items-center text-textMain">
           <div className="w-full max-w-[350px] sm:max-w-[390px] md:max-w-[400px] lg:max-w-[420px] bg-white rounded-[16px] px-4 py-6 sm:px-6 sm:py-8 md:px-8 md:py-10 lg:px-8 lg:py-10">
             <div className="my-[10px]">
               <h1 className="text-heading1 text-center font-bold mb-[44px]">
@@ -47,6 +50,16 @@ const MedicationList = () => {
                 })}
               </div>
             </div>
+          </div>
+          <div className="mt-[26px] flex justify-center">
+            <FormButton
+              type="button"
+              text="薬を追加"
+              variant="secondary"
+              showIcon={true}
+              icon={<AddIcon />}
+              onClick={()=> router.push("/medications/new")}
+            />
           </div>
         </div>
       </div>
