@@ -15,17 +15,22 @@ const MedicationList = () => {
   //GETした薬一覧の状態を管理
   const [medications, setMedications] = useState<Medication[]>([]);
   const [pagination, setPagination] = useState<Pagination | null>(null);
+  const [currentPage, setCurrentPage] = useState(1);
   const router = useRouter();
   useEffect(() => {
     const fetchMedications = async () => {
       const response = await api.get<GetMedicationsResponse>(
-        "/api/medications?page=1",
+        `/api/medications?page=${currentPage}`,
       );
       setMedications(response.medications);
       setPagination(response.pagination);
     };
     fetchMedications();
-  }, []);
+  }, [currentPage]);
+  // totalPagesを配列にしmapで全件表示する
+  const pageNumbers = pagination
+    ? Array.from({ length: pagination.totalPages }, (_, index) => index + 1)
+    : [];
   return (
     <div className="text-small">
       <div className="bg-lightPink min-h-screen flex justify-center items-start py-10">
@@ -49,9 +54,39 @@ const MedicationList = () => {
               </div>
             </div>
             {pagination && (
-              <p className="flex justify-center">
-                {pagination.page}/{pagination.totalPages}
-              </p>
+              <div>
+                <p className="flex justify-center gap-2">
+                  {pageNumbers.map((pageNumber) => {
+                    return (
+                      <button
+                        key={pageNumber}
+                        className={`w-8 h-8 border rounded-[8px] ${currentPage === pageNumber ? "bg-lightPink" : ""}`}
+                        onClick={() => setCurrentPage(pageNumber)}
+                      >
+                        {pageNumber}
+                      </button>
+                    );
+                  })}
+                </p>
+                <button
+                  onClick={() => {
+                    currentPage > 1 && setCurrentPage(currentPage - 1);
+                  }}
+                  disabled={currentPage === 1}
+                >
+                  戻
+                </button>
+                <button
+                  onClick={() => {
+                    currentPage < pagination.totalPages &&
+                      setCurrentPage(currentPage + 1);
+                  }}
+                  // 最後のページではボタン自体を無効にする
+                  disabled={currentPage === pagination.totalPages}
+                >
+                  次
+                </button>
+              </div>
             )}
           </div>
           <div className="mt-[26px] flex justify-center">
