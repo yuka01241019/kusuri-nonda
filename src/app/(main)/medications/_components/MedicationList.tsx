@@ -48,6 +48,11 @@ const MedicationList = () => {
                 })}
               </div>
             </div>
+            {pagination && (
+              <p className="flex justify-center">
+                {pagination.page}/{pagination.totalPages}
+              </p>
+            )}
           </div>
           <div className="mt-[26px] flex justify-center">
             <FormButton
