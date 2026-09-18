@@ -54,38 +54,38 @@ const MedicationList = () => {
               </div>
             </div>
             {pagination && (
-              <div>
-                <p className="flex justify-center gap-2">
-                  {pageNumbers.map((pageNumber) => {
-                    return (
-                      <button
-                        key={pageNumber}
-                        className={`w-8 h-8 border rounded-[8px] ${currentPage === pageNumber ? "bg-lightPink" : ""}`}
-                        onClick={() => setCurrentPage(pageNumber)}
-                      >
-                        {pageNumber}
-                      </button>
-                    );
-                  })}
-                </p>
-                <button
-                  onClick={() => {
-                    currentPage > 1 && setCurrentPage(currentPage - 1);
-                  }}
-                  disabled={currentPage === 1}
-                >
-                  戻
-                </button>
-                <button
-                  onClick={() => {
-                    currentPage < pagination.totalPages &&
+              <div className="flex justify-center gap-2">
+                {currentPage > 1 && (
+                  <button
+                    className="w-8 h-8 border rounded-[8px]"
+                    onClick={() => {
+                      setCurrentPage(currentPage - 1);
+                    }}
+                  >
+                    {"<"}
+                  </button>
+                )}
+                {pageNumbers.map((pageNumber) => {
+                  return (
+                    <button
+                      key={pageNumber}
+                      className={`w-8 h-8 border rounded-[8px] ${currentPage === pageNumber ? "bg-lightPink" : ""}`}
+                      onClick={() => setCurrentPage(pageNumber)}
+                    >
+                      {pageNumber}
+                    </button>
+                  );
+                })}
+                {currentPage < pagination.totalPages && (
+                  <button
+                    className="w-8 h-8 border rounded-[8px]"
+                    onClick={() => {
                       setCurrentPage(currentPage + 1);
-                  }}
-                  // 最後のページではボタン自体を無効にする
-                  disabled={currentPage === pagination.totalPages}
-                >
-                  次
-                </button>
+                    }}
+                  >
+                    {">"}
+                  </button>
+                )}
               </div>
             )}
           </div>
