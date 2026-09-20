@@ -1,32 +1,24 @@
 "use client";
-import {
-  GetMedicationsResponse,
-  Medication,
-  Pagination,
-} from "@/app/_types/medication/CreateMedication";
+import { GetMedicationsResponse } from "@/app/_types/medication/CreateMedication";
 import { api } from "@/utils/api";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { MedicationItem } from "./MedicationItem";
 import { FormButton } from "@/app/_components/FormButton";
 import AddIcon from "@assets/icons/medication/add/add.svg";
+import useSWR from "swr";
 
 const MedicationList = () => {
-  //GETした薬一覧の状態を管理
-  const [medications, setMedications] = useState<Medication[]>([]);
-  const [pagination, setPagination] = useState<Pagination | null>(null);
   const [currentPage, setCurrentPage] = useState(1);
   const router = useRouter();
-  useEffect(() => {
-    const fetchMedications = async () => {
-      const response = await api.get<GetMedicationsResponse>(
-        `/api/medications?page=${currentPage}`,
-      );
-      setMedications(response.medications);
-      setPagination(response.pagination);
-    };
-    fetchMedications();
-  }, [currentPage]);
+  const fetcher = (url: string) => {
+    return api.get<GetMedicationsResponse>(url);
+  };
+  const { data } = useSWR(`/api/medications?page=${currentPage}`, fetcher);
+  // SWRから薬一覧を取り出す。まだ取得できていなければ、ひとまず空の配列にする
+  const medications = data?.medications ?? [];
+  // SWRからページ情報を取り出す。まだ取得できていなければ、ひとまずnullにする
+  const pagination = data?.pagination ?? null;
   // totalPagesを配列にしmapで全件表示する
   const pageNumbers = pagination
     ? Array.from({ length: pagination.totalPages }, (_, index) => index + 1)
