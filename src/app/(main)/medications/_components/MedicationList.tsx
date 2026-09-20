@@ -14,7 +14,10 @@ const MedicationList = () => {
   const fetcher = (url: string) => {
     return api.get<GetMedicationsResponse>(url);
   };
-  const { data } = useSWR(`/api/medications?page=${currentPage}`, fetcher);
+  const { data, isLoading } = useSWR(
+    `/api/medications?page=${currentPage}`,
+    fetcher,
+  );
   // SWRから薬一覧を取り出す。まだ取得できていなければ、ひとまず空の配列にする
   const medications = data?.medications ?? [];
   // SWRからページ情報を取り出す。まだ取得できていなければ、ひとまずnullにする
@@ -33,16 +36,28 @@ const MedicationList = () => {
                 薬一覧
               </h1>
               <div>
-                {medications.map((medication, index) => {
-                  return (
-                    <MedicationItem
-                      key={medication.id}
-                      medication={medication}
-                      // 最後の薬の場合下線はなし
-                      isLast={index === medications.length - 1}
-                    />
-                  );
-                })}
+                {isLoading ? (
+                  <div className="flex justify-center">
+                    <div className="relative flex h-28 w-28 items-center justify-center">
+                      {/* 外側の回転する丸 */}
+                      <div className="absolute inset-0 animate-spin rounded-full border-8 border-lightPink border-t-submitBtn" />
+
+                      {/* 真ん中の文字 */}
+                      <span className="text-sm text-textMain">Loading...</span>
+                    </div>
+                  </div>
+                ) : (
+                  medications.map((medication, index) => {
+                    return (
+                      <MedicationItem
+                        key={medication.id}
+                        medication={medication}
+                        // 最後の薬の場合下線はなし
+                        isLast={index === medications.length - 1}
+                      />
+                    );
+                  })
+                )}
               </div>
             </div>
             {pagination && (
