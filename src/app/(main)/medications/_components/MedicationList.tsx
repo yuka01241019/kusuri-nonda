@@ -5,7 +5,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { MedicationItem } from "./MedicationItem";
 import { FormButton } from "@/app/_components/FormButton";
-import AddIcon from "@assets/icons/medication/add/add.svg";
+import AddIcon from "@assets/icons/add.svg";
 import useSWR from "swr";
 import { LoadingSpinner } from "@/app/_components/LoadingSpinner";
 
