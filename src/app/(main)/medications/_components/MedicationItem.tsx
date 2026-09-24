@@ -15,7 +15,7 @@ import WhiteRoundTabletIcon from "@assets/icons/medication/color/RoundTablet/whi
 import YellowRoundTabletIcon from "@assets/icons/medication/color/RoundTablet/yellow.svg";
 import PowderIcon from "@assets/icons/medication/form/powder.svg";
 import EyedropIcon from "@assets/icons/medication/form/eyedrop.svg";
-
+import ChevronRightIcon from "@assets/icons/chevron-right.svg";
 import { Color } from "../_lib/medicationFormSchema";
 
 type MedicationItemProps = {
@@ -66,9 +66,15 @@ export const MedicationItem: React.FC<MedicationItemProps> = ({
     >
       <div className="flex items-center gap-2">
         {icon}
-        {/* {medication.form} */}
         {medication.name}
-        {/* {medication.color} */}
+        <button
+          type="button"
+          // 読み上げソフトにボタンの役割を伝える
+          aria-label={`${medication.name}の編集・削除メニューを開く`}
+          className="ml-auto p-2"
+        >
+          <ChevronRightIcon className="w-4 h-4" />
+        </button>
       </div>
     </div>
   );
