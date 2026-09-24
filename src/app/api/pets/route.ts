@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/app/_lib/prisma";
-import { handleApiError } from "@/utils/handleApiError ";
+import { handleApiError } from "@/utils/handleApiError";
 import { supabase } from "@/utils/supabase";
 
 //クライアント→APIに送られてくるデータ（リクエスト）
@@ -28,7 +28,7 @@ export const POST = async (request: NextRequest) => {
     if (!dbUser) {
       return NextResponse.json(
         { message: "ユーザーが見つかりません" },
-        { status: 400 }
+        { status: 400 },
       );
     }
     const body = await request.json();
@@ -53,7 +53,7 @@ export const POST = async (request: NextRequest) => {
     });
     return NextResponse.json(
       { message: "ペットを登録しました", pet },
-      { status: 200 }
+      { status: 200 },
     );
   } catch (error) {
     return handleApiError(error);
