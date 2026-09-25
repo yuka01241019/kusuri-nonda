@@ -19,6 +19,9 @@ import ChevronRightIcon from "@assets/icons/chevron-right.svg";
 import { Color } from "../_lib/medicationFormSchema";
 import { useState } from "react";
 import Modal from "react-modal";
+import CloseIcon from "@assets/icons/close.svg";
+import EditIcon from "@assets/icons/edit.svg";
+import TrashIcon from "@assets/icons/trash.svg";
 
 type MedicationItemProps = {
   medication: Medication;
@@ -88,17 +91,32 @@ export const MedicationItem: React.FC<MedicationItemProps> = ({
         onRequestClose={() => setIsModalOpen(false)}
         contentLabel={`${medication.name}の編集・削除メニュー`}
         overlayClassName="fixed inset-0 z-50 flex items-center justify-center bg-black/40"
-        className="w-[90%] max-w-sm rounded-2xl bg-white p-6 outline-none"
+        className="text-small text-textMain relative w-[280px] max-w-sm rounded-2xl bg-white p-6 outline-none "
       >
-        <p>{medication.name}</p>
-        <button type="button" className="">
-          編集
-        </button>
-        <button type="button" className="">
-          削除
-        </button>
-        <button type="button" onClick={() => setIsModalOpen(false)}>
-          閉じる
+        <p className="mb-4 text-center">{medication.name}</p>
+        <div className="flex flex-col items-center gap-2">
+          <button
+            type="button"
+            className="flex items-center justify-center gap-1 rounded-lg bg-submitBtn px-5 py-2 text-white"
+          >
+            <EditIcon className="w-5 h-5" />
+            編集
+          </button>
+          <button
+            type="button"
+            className="flex items-center justify-center gap-1 rounded-lg bg-red-400 px-5 py-2 text-white"
+          >
+            <TrashIcon className="w-5 h-5" />
+            削除
+          </button>
+        </div>
+        <button
+          type="button"
+          onClick={() => setIsModalOpen(false)}
+          aria-label="モーダルを閉じる"
+          className="absolute right-4 top-4 p-1"
+        >
+          <CloseIcon className="w-5 h-5" />
         </button>
       </Modal>
     </div>
