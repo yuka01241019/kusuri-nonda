@@ -17,6 +17,8 @@ import PowderIcon from "@assets/icons/medication/form/powder.svg";
 import EyedropIcon from "@assets/icons/medication/form/eyedrop.svg";
 import ChevronRightIcon from "@assets/icons/chevron-right.svg";
 import { Color } from "../_lib/medicationFormSchema";
+import { useState } from "react";
+import Modal from "react-modal";
 
 type MedicationItemProps = {
   medication: Medication;
@@ -60,6 +62,8 @@ export const MedicationItem: React.FC<MedicationItemProps> = ({
     const Icon = roundTabletIconMap[medication.color];
     icon = <Icon className="w-5 h-5" />;
   }
+  // モーダルの状態管理
+  const [isModalOpen, setIsModalOpen] = useState(false);
   return (
     <div
       className={`pb-5 pt-2 ${isLast ? "" : "border-b-[1.25px] border-gray-300 "}`}
@@ -69,6 +73,9 @@ export const MedicationItem: React.FC<MedicationItemProps> = ({
         {medication.name}
         <button
           type="button"
+          onClick={() => {
+            setIsModalOpen(true);
+          }}
           // 読み上げソフトにボタンの役割を伝える
           aria-label={`${medication.name}の編集・削除メニューを開く`}
           className="ml-auto p-2"
@@ -76,6 +83,24 @@ export const MedicationItem: React.FC<MedicationItemProps> = ({
           <ChevronRightIcon className="w-4 h-4" />
         </button>
       </div>
+      <Modal
+        isOpen={isModalOpen}
+        onRequestClose={() => setIsModalOpen(false)}
+        contentLabel={`${medication.name}の編集・削除メニュー`}
+        overlayClassName="fixed inset-0 z-50 flex items-center justify-center bg-black/40"
+        className="w-[90%] max-w-sm rounded-2xl bg-white p-6 outline-none"
+      >
+        <p>{medication.name}</p>
+        <button type="button" className="">
+          編集
+        </button>
+        <button type="button" className="">
+          削除
+        </button>
+        <button type="button" onClick={() => setIsModalOpen(false)}>
+          閉じる
+        </button>
+      </Modal>
     </div>
   );
 };
