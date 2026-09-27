@@ -1,6 +1,6 @@
 "use client";
 
-import { Medication } from "@/app/_types/medication/CreateMedication";
+import { Medication } from "@/app/_types/medication/medication";
 //TABLET
 import GrayTabletIcon from "@assets/icons/medication/color/tablet/gray.svg";
 import OrangeTabletIcon from "@assets/icons/medication/color/tablet/orange.svg";

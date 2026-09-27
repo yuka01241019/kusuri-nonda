@@ -1,5 +1,5 @@
 "use client";
-import { GetMedicationsResponse } from "@/app/_types/medication/CreateMedication";
+import { GetMedicationsResponse } from "@/app/_types/medication/medication";
 import { api } from "@/utils/api";
 import { useState } from "react";
 import { useRouter } from "next/navigation";

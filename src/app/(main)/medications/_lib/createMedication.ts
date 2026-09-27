@@ -1,5 +1,5 @@
 import { CreateMedicationRequest } from "@/app/api/medications/route";
-import { Medication } from "@/app/_types/medication/CreateMedication";
+import { Medication } from "@/app/_types/medication/medication";
 import { api } from "@/utils/api";
 
 export const createMedication = async (
