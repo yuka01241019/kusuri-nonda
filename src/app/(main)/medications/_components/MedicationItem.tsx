@@ -18,8 +18,7 @@ import EyedropIcon from "@assets/icons/medication/form/eyedrop.svg";
 import ChevronRightIcon from "@assets/icons/chevron-right.svg";
 import { Color } from "../_lib/medicationFormSchema";
 import { useState } from "react";
-import Modal from "react-modal";
-import CloseIcon from "@assets/icons/close.svg";
+import { DropdownMenu } from "radix-ui";
 import EditIcon from "@assets/icons/edit.svg";
 import TrashIcon from "@assets/icons/trash.svg";
 
@@ -65,8 +64,8 @@ export const MedicationItem: React.FC<MedicationItemProps> = ({
     const Icon = roundTabletIconMap[medication.color];
     icon = <Icon className="w-5 h-5" />;
   }
-  // モーダルの状態管理
-  const [isModalOpen, setIsModalOpen] = useState(false);
+  // ドロップダウンメニューの開閉状態を管理
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
   return (
     <div
       className={`pb-5 pt-2 ${isLast ? "" : "border-b-[1.25px] border-gray-300 "}`}
@@ -74,51 +73,39 @@ export const MedicationItem: React.FC<MedicationItemProps> = ({
       <div className="flex items-center gap-2">
         {icon}
         {medication.name}
-        <button
-          type="button"
-          onClick={() => {
-            setIsModalOpen(true);
-          }}
-          // 読み上げソフトにボタンの役割を伝える
-          aria-label={`${medication.name}の編集・削除メニューを開く`}
-          className="ml-auto p-2"
-        >
-          <ChevronRightIcon className="w-4 h-4" />
-        </button>
+        <DropdownMenu.Root open={isMenuOpen} onOpenChange={setIsMenuOpen}>
+          {isMenuOpen && (
+            <div className="fixed inset-0 z-[60] bg-black/20"></div>
+          )}
+          <DropdownMenu.Trigger asChild>
+            <button
+              type="button"
+              // 読み上げソフトにボタンの役割を伝える
+              aria-label={`${medication.name}の編集・削除メニューを開く`}
+              className="ml-auto rounded-full p-2 outline-none hover:bg-lightPink focus-visible:bg-lightPink"
+            >
+              <ChevronRightIcon className="w-4 h-4" />
+            </button>
+          </DropdownMenu.Trigger>
+          <DropdownMenu.Portal>
+            {/* 白い枠 */}
+            <DropdownMenu.Content
+              sideOffset={5}
+              align="end"
+              className="text-small text-textMain z-[70] w-[180px] space-y-2 rounded-[16px] bg-white p-6 shadow-lg"
+            >
+              <DropdownMenu.Item className="mx-auto flex w-fit cursor-pointer items-center justify-center gap-1 rounded-lg bg-submitBtn px-6 py-2 text-white opacity-100 outline-none hover:opacity-80 transition-opacity">
+                <EditIcon className="w-5 h-5" />
+                編集
+              </DropdownMenu.Item>
+              <DropdownMenu.Item className="mx-auto flex w-fit cursor-pointer items-center justify-center gap-1 rounded-lg bg-red-400 px-6 py-2 text-white  opacity-100 outline-none hover:opacity-80 transition-opacity">
+                <TrashIcon className="w-5 h-5" />
+                削除
+              </DropdownMenu.Item>
+            </DropdownMenu.Content>
+          </DropdownMenu.Portal>
+        </DropdownMenu.Root>
       </div>
-      <Modal
-        isOpen={isModalOpen}
-        onRequestClose={() => setIsModalOpen(false)}
-        contentLabel={`${medication.name}の編集・削除メニュー`}
-        overlayClassName="fixed inset-0 z-50 flex items-center justify-center bg-black/40"
-        className="text-small text-textMain relative w-[280px] max-w-sm rounded-2xl bg-white p-6 outline-none "
-      >
-        <p className="mb-4 text-center">{medication.name}</p>
-        <div className="flex flex-col items-center gap-2">
-          <button
-            type="button"
-            className="flex items-center justify-center gap-1 rounded-lg bg-submitBtn px-5 py-2 text-white"
-          >
-            <EditIcon className="w-5 h-5" />
-            編集
-          </button>
-          <button
-            type="button"
-            className="flex items-center justify-center gap-1 rounded-lg bg-red-400 px-5 py-2 text-white"
-          >
-            <TrashIcon className="w-5 h-5" />
-            削除
-          </button>
-        </div>
-        <button
-          type="button"
-          onClick={() => setIsModalOpen(false)}
-          aria-label="モーダルを閉じる"
-          className="absolute right-4 top-4 p-1"
-        >
-          <CloseIcon className="w-5 h-5" />
-        </button>
-      </Modal>
     </div>
   );
 };
