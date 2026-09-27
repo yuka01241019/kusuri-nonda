@@ -27,3 +27,8 @@ export type GetMedicationsResponse = {
   medications: Medication[];
   pagination: Pagination;
 };
+
+// DELETEのレスポンス
+export type DeleteMedicationResponse = {
+  message: string;
+};
