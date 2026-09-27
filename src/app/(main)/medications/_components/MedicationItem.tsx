@@ -18,7 +18,7 @@ import EyedropIcon from "@assets/icons/medication/form/eyedrop.svg";
 import ChevronRightIcon from "@assets/icons/chevron-right.svg";
 import { Color } from "../_lib/medicationFormSchema";
 import { useState } from "react";
-import { DropdownMenu } from "radix-ui";
+import { DropdownMenu, AlertDialog } from "radix-ui";
 import EditIcon from "@assets/icons/edit.svg";
 import TrashIcon from "@assets/icons/trash.svg";
 import { deleteMedication } from "../_lib/deleteMedication";
@@ -69,6 +69,8 @@ export const MedicationItem: React.FC<MedicationItemProps> = ({
   }
   // ドロップダウンメニューの開閉状態を管理
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  // 削除確認ダイアログの開閉状態を管理
+  const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
   const handleDelete = async () => {
     await deleteMedication(medication.id);
     onDelete();
@@ -106,7 +108,7 @@ export const MedicationItem: React.FC<MedicationItemProps> = ({
                 編集
               </DropdownMenu.Item>
               <DropdownMenu.Item
-                onSelect={handleDelete}
+                onSelect={() => setIsDeleteDialogOpen(true)}
                 className="mx-auto flex w-fit cursor-pointer items-center justify-center gap-1 rounded-lg bg-red-400 px-6 py-2 text-white  opacity-100 outline-none hover:opacity-80 transition-opacity"
               >
                 <TrashIcon className="w-5 h-5" />
@@ -115,6 +117,30 @@ export const MedicationItem: React.FC<MedicationItemProps> = ({
             </DropdownMenu.Content>
           </DropdownMenu.Portal>
         </DropdownMenu.Root>
+        <AlertDialog.Root
+          open={isDeleteDialogOpen}
+          onOpenChange={setIsDeleteDialogOpen}
+        >
+          <AlertDialog.Portal>
+            <AlertDialog.Overlay className="fixed inset-0 z-[80] bg-black/20" />
+            <AlertDialog.Content className="text-small fixed left-1/2 top-1/2 z-[90] w-[300px] -translate-x-1/2 -translate-y-1/2 rounded-[16px] bg-white p-6 shadow-lg">
+              <AlertDialog.Title>
+                {medication.name}を削除しますか？
+              </AlertDialog.Title>
+              <div className="mt-6 flex justify-center gap-4">
+                <AlertDialog.Cancel className="rounded-lg bg-gray-200 px-4 py-2 hover:opacity-80">
+                  キャンセル
+                </AlertDialog.Cancel>
+                <AlertDialog.Action
+                  onClick={handleDelete}
+                  className="rounded-lg bg-red-400 px-4 py-2 text-white hover:opacity-80"
+                >
+                  削除する
+                </AlertDialog.Action>
+              </div>
+            </AlertDialog.Content>
+          </AlertDialog.Portal>
+        </AlertDialog.Root>
       </div>
     </div>
   );
