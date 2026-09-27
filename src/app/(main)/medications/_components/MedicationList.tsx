@@ -15,7 +15,7 @@ const MedicationList = () => {
   const fetcher = (url: string) => {
     return api.get<GetMedicationsResponse>(url);
   };
-  const { data, isLoading } = useSWR(
+  const { data, isLoading, mutate } = useSWR(
     `/api/medications?page=${currentPage}`,
     fetcher,
   );
@@ -47,6 +47,7 @@ const MedicationList = () => {
                         medication={medication}
                         // 最後の薬の場合下線はなし
                         isLast={index === medications.length - 1}
+                        onDelete={mutate}
                       />
                     );
                   })

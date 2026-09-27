@@ -21,15 +21,18 @@ import { useState } from "react";
 import { DropdownMenu } from "radix-ui";
 import EditIcon from "@assets/icons/edit.svg";
 import TrashIcon from "@assets/icons/trash.svg";
+import { deleteMedication } from "../_lib/deleteMedication";
 
 type MedicationItemProps = {
   medication: Medication;
   isLast: boolean;
+  onDelete: () => void;
 };
 
 export const MedicationItem: React.FC<MedicationItemProps> = ({
   medication,
   isLast,
+  onDelete,
 }) => {
   const tabletIconMap: Record<
     Color,
@@ -66,6 +69,10 @@ export const MedicationItem: React.FC<MedicationItemProps> = ({
   }
   // ドロップダウンメニューの開閉状態を管理
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const handleDelete = async () => {
+    await deleteMedication(medication.id);
+    onDelete();
+  };
   return (
     <div
       className={`pb-5 pt-2 ${isLast ? "" : "border-b-[1.25px] border-gray-300 "}`}
@@ -98,7 +105,10 @@ export const MedicationItem: React.FC<MedicationItemProps> = ({
                 <EditIcon className="w-5 h-5" />
                 編集
               </DropdownMenu.Item>
-              <DropdownMenu.Item className="mx-auto flex w-fit cursor-pointer items-center justify-center gap-1 rounded-lg bg-red-400 px-6 py-2 text-white  opacity-100 outline-none hover:opacity-80 transition-opacity">
+              <DropdownMenu.Item
+                onSelect={handleDelete}
+                className="mx-auto flex w-fit cursor-pointer items-center justify-center gap-1 rounded-lg bg-red-400 px-6 py-2 text-white  opacity-100 outline-none hover:opacity-80 transition-opacity"
+              >
                 <TrashIcon className="w-5 h-5" />
                 削除
               </DropdownMenu.Item>
