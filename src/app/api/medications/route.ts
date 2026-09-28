@@ -2,8 +2,10 @@ import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/app/_lib/prisma";
 import { handleApiError } from "@/utils/handleApiError";
 import { supabase } from "@/utils/supabase";
-import { Color } from "@/app/(main)/medications/_lib/medicationFormSchema";
-import { Form } from "@/app/(main)/medications/_lib/medicationFormSchema";
+import {
+  Color,
+  Form,
+} from "@/app/(main)/medications/_lib/medicationFormSchema";
 
 export type CreateMedicationRequest = {
   name: string;
