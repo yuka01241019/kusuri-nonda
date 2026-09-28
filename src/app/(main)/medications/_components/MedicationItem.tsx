@@ -22,6 +22,7 @@ import { DropdownMenu, AlertDialog } from "radix-ui";
 import EditIcon from "@assets/icons/edit.svg";
 import TrashIcon from "@assets/icons/trash.svg";
 import { deleteMedication } from "../_lib/deleteMedication";
+import toast from "react-hot-toast";
 
 type MedicationItemProps = {
   medication: Medication;
@@ -72,8 +73,18 @@ export const MedicationItem: React.FC<MedicationItemProps> = ({
   // 削除確認ダイアログの開閉状態を管理
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
   const handleDelete = async () => {
-    await deleteMedication(medication.id);
-    onDelete();
+    const toastId = toast.loading("削除中です…");
+    try {
+      await deleteMedication(medication.id);
+      onDelete();
+      toast.success("薬を削除しました！", { id: toastId });
+    } catch (error) {
+      if (error instanceof Error) {
+        toast.error(error.message, { id: toastId });
+      } else {
+        toast.error("予期せぬエラーが発生しました", { id: toastId });
+      }
+    }
   };
   return (
     <div
