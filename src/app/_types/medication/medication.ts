@@ -32,3 +32,9 @@ export type GetMedicationsResponse = {
 export type DeleteMedicationResponse = {
   message: string;
 };
+
+// PUTのレスポンス
+export type PutMedicationResponse = {
+  message: string;
+  medication: Medication;
+};
