@@ -16,5 +16,9 @@ input[type="date"] {
 }
 
 html {
-  scrollbar-gutter: stable;
+  overflow-y: scroll;
+}
+
+body {
+  width: 100vw;
 }
