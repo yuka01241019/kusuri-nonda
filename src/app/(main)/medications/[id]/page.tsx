@@ -1,5 +1,8 @@
 "use client";
 
+import { useRouteGuard } from "@/app/_hooks/useRouteGuard";
+import MedicationEdit from "../_components/MedicationEdit";
+
 type MedicationEditPageProps = {
   params: {
     id: string;
@@ -7,10 +10,10 @@ type MedicationEditPageProps = {
 };
 
 const MedicationEditPage = ({ params }: MedicationEditPageProps) => {
+  useRouteGuard();
   return (
     <div>
-      <h1>薬を編集</h1>
-      <p>薬のID：{params.id}</p>
+      <MedicationEdit id={params.id} />
     </div>
   );
 };
