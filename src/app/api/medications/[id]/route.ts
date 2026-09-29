@@ -98,7 +98,11 @@ export const PUT = async (
     }
     const medication = await prisma.medication.update({
       where: { id: medicationId, userId: dbUser.id },
-      data: { name, form, color },
+      data: {
+        name,
+        form,
+        color: form === Form.TABLET || form === Form.ROUNDTABLET ? color : null,
+      },
     });
     return NextResponse.json(
       { message: "薬を編集しました", medication },
