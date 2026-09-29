@@ -100,7 +100,7 @@ export const MedicationItem: React.FC<MedicationItemProps> = ({
       <div className="flex items-center gap-2">
         {icon}
         {medication.name}
-        <DropdownMenu.Root open={isMenuOpen} onOpenChange={setIsMenuOpen}>
+        <DropdownMenu.Root modal={false} open={isMenuOpen} onOpenChange={setIsMenuOpen}>
           {isMenuOpen && (
             <div className="fixed inset-0 z-[60] bg-black/20"></div>
           )}
