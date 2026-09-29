@@ -23,6 +23,7 @@ import EditIcon from "@assets/icons/edit.svg";
 import TrashIcon from "@assets/icons/trash.svg";
 import { deleteMedication } from "../_lib/deleteMedication";
 import toast from "react-hot-toast";
+import { useRouter } from "next/navigation";
 
 type MedicationItemProps = {
   medication: Medication;
@@ -72,6 +73,9 @@ export const MedicationItem: React.FC<MedicationItemProps> = ({
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   // 削除確認ダイアログの開閉状態を管理
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
+
+  const router = useRouter();
+
   const handleDelete = async () => {
     const toastId = toast.loading("削除中です…");
     try {
@@ -85,6 +89,9 @@ export const MedicationItem: React.FC<MedicationItemProps> = ({
         toast.error("予期せぬエラーが発生しました", { id: toastId });
       }
     }
+  };
+  const handleEdit = () => {
+    router.push(`/medications/${medication.id}`);
   };
   return (
     <div
@@ -114,7 +121,10 @@ export const MedicationItem: React.FC<MedicationItemProps> = ({
               align="end"
               className="text-small text-textMain z-[70] w-[180px] space-y-2 rounded-[16px] bg-white p-6 shadow-lg"
             >
-              <DropdownMenu.Item className="mx-auto flex w-fit cursor-pointer items-center justify-center gap-1 rounded-lg bg-submitBtn px-6 py-2 text-white opacity-100 outline-none hover:opacity-80 transition-opacity">
+              <DropdownMenu.Item
+                onSelect={handleEdit}
+                className="mx-auto flex w-fit cursor-pointer items-center justify-center gap-1 rounded-lg bg-submitBtn px-6 py-2 text-white opacity-100 outline-none hover:opacity-80 transition-opacity"
+              >
                 <EditIcon className="w-5 h-5" />
                 編集
               </DropdownMenu.Item>
