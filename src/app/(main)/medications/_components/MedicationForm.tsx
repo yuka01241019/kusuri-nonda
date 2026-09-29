@@ -14,8 +14,17 @@ import { FormButton } from "@/app/_components/FormButton";
 import toast from "react-hot-toast";
 import { createMedication } from "..//_lib/createMedication";
 import { MedicationColorSelector } from "./MedicationColorSelector";
+import { Medication } from "@/app/_types/medication/medication";
+import { updateMedication } from "../_lib/updateMedication";
 
-export const MedicationForm: React.FC = () => {
+// 登録・編集フォームで使用する薬情報(編集時のみ既存の薬情報を受け取る)
+type MedicationFormProps = {
+  medication?: Medication;
+};
+
+export const MedicationForm: React.FC<MedicationFormProps> = ({
+  medication,
+}) => {
   const router = useRouter();
   const {
     register,
@@ -25,10 +34,11 @@ export const MedicationForm: React.FC = () => {
     watch,
   } = useForm<medicationFormData>({
     resolver: zodResolver(medicationFormSchema),
+    // 編集時は既存データを初期値にし、新規登録時は空の状態にする
     defaultValues: {
-      name: "",
-      form: undefined,
-      color: undefined,
+      name: medication?.name ?? "",
+      form: medication?.form ?? undefined,
+      color: medication?.color ?? undefined,
     },
   });
   const formValue = watch("form");
@@ -37,10 +47,16 @@ export const MedicationForm: React.FC = () => {
   const mode: "tablet" | "roundTablet" =
     formValue === Form.ROUNDTABLET ? "roundTablet" : "tablet";
   const onSubmit = async (data: medicationFormData) => {
-    const toastId = toast.loading("登録中です…");
+    const toastId = toast.loading(medication ? "更新中です…" : "登録中です…");
     try {
-      await createMedication(data);
-      toast.success("薬を登録しました！", { id: toastId });
+      if (medication) {
+        await updateMedication(medication.id, data);
+      } else {
+        await createMedication(data);
+      }
+      toast.success(medication ? "薬を更新しました！" : "薬を登録しました！", {
+        id: toastId,
+      });
       router.push("/medications");
     } catch (error) {
       if (error instanceof Error) {
@@ -93,7 +109,7 @@ export const MedicationForm: React.FC = () => {
                 )}
                 <div className="mt-[26px] flex justify-center">
                   <FormButton
-                    text="登録"
+                    text={medication ? "更新" : "登録"}
                     variant="secondary"
                     showIcon={false}
                     disabled={isSubmitting}
