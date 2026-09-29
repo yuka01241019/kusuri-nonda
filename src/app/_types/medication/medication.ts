@@ -3,7 +3,7 @@ import {
   Color,
 } from "@/app/(main)/medications/_lib/medicationFormSchema";
 
-//サーバーから帰ってくるデータ（レスポンス）
+// サーバーから帰ってくるデータ（レスポンス）
 export type Medication = {
   id: number;
   userId: number;
@@ -14,7 +14,7 @@ export type Medication = {
   updatedAt: string;
 };
 
-//ページ情報の型
+// ページ情報の型
 export type Pagination = {
   page: number;
   pageSize: number;
@@ -22,10 +22,16 @@ export type Pagination = {
   totalPages: number;
 };
 
-//GET全体のレスポンス
+// GET全体のレスポンス
 export type GetMedicationsResponse = {
   medications: Medication[];
   pagination: Pagination;
+};
+
+// GET個別のレスポンス
+export type GetMedicationResponse = {
+  message: string;
+  medication: Medication;
 };
 
 // DELETEのレスポンス
