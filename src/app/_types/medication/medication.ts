@@ -1,17 +1,11 @@
-import {
-  Form,
-  Color,
-} from "@/app/(main)/medications/_lib/medicationFormSchema";
+import { Form, Color } from "@prisma/client";
 
 // サーバーから帰ってくるデータ（レスポンス）
 export type Medication = {
   id: number;
-  userId: number;
   name: string;
   form: Form;
   color: Color | null;
-  createdAt: string;
-  updatedAt: string;
 };
 
 // ページ情報の型
