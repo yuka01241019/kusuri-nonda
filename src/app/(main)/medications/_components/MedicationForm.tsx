@@ -5,8 +5,8 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import {
   medicationFormSchema,
   medicationFormData,
-  Form,
 } from "../_lib/medicationFormSchema";
+import { Form } from "@prisma/client";
 import { FormInput } from "@/app/_components/FormInput";
 import { useRouter } from "next/navigation";
 import { MedicationShapeSelector } from "./MedicationShapeSelector";

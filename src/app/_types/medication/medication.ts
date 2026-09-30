@@ -16,6 +16,12 @@ export type Pagination = {
   totalPages: number;
 };
 
+// POSTのレスポンス
+export type PostMedicationResponse = {
+  message: string;
+  medication: Medication;
+};
+
 // GET全体のレスポンス
 export type GetMedicationsResponse = {
   medications: Medication[];

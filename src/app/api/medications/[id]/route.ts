@@ -2,10 +2,12 @@ import { prisma } from "@/app/_lib/prisma";
 import { handleApiError } from "@/utils/handleApiError";
 import { supabase } from "@/utils/supabase";
 import { NextRequest, NextResponse } from "next/server";
+import { Form, Color } from "@prisma/client";
 import {
-  Color,
-  Form,
-} from "@/app/(main)/medications/_lib/medicationFormSchema";
+  GetMedicationResponse,
+  PutMedicationResponse,
+  DeleteMedicationResponse,
+} from "@/app/_types/medication/medication";
 
 export type UpdateMedicationRequest = {
   name: string;
@@ -58,7 +60,9 @@ export const DELETE = async (
         { status: 404 },
       );
     }
-    return NextResponse.json({ message: "薬を削除しました" });
+    return NextResponse.json<DeleteMedicationResponse>({
+      message: "薬を削除しました",
+    });
   } catch (error) {
     return handleApiError(error);
   }
@@ -103,8 +107,9 @@ export const PUT = async (
         form,
         color: form === Form.TABLET || form === Form.ROUNDTABLET ? color : null,
       },
+      select: { id: true, name: true, form: true, color: true },
     });
-    return NextResponse.json(
+    return NextResponse.json<PutMedicationResponse>(
       { message: "薬を編集しました", medication },
       { status: 200 },
     );
@@ -146,6 +151,8 @@ export const GET = async (
     }
     const medication = await prisma.medication.findUnique({
       where: { id: medicationId, userId: dbUser.id },
+      // DBからレスポンスに必要な項目のみ取得
+      select: { id: true, name: true, form: true, color: true }, // id,name,form,colorを取得する
     });
     if (!medication) {
       return NextResponse.json(
@@ -153,7 +160,7 @@ export const GET = async (
         { status: 404 },
       );
     }
-    return NextResponse.json(
+    return NextResponse.json<GetMedicationResponse>(
       { message: "薬を取得しました", medication },
       { status: 200 },
     );

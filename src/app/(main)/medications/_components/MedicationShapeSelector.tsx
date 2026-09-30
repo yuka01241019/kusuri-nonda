@@ -4,7 +4,7 @@ import TabletIcon from "@assets/icons/medication/form/tablet.svg";
 import RoundTabletIcon from "@assets/icons/medication/form/roundtablet.svg";
 import EyedropIcon from "@assets/icons/medication/form/eyedrop.svg";
 import PowderIcon from "@assets/icons/medication/form/powder.svg";
-import { Form } from "../_lib/medicationFormSchema";
+import { Form } from "@prisma/client";
 
 type MedicationShapeSelectorProps = {
   label: string;

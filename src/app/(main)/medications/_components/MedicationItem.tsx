@@ -16,7 +16,7 @@ import YellowRoundTabletIcon from "@assets/icons/medication/color/RoundTablet/ye
 import PowderIcon from "@assets/icons/medication/form/powder.svg";
 import EyedropIcon from "@assets/icons/medication/form/eyedrop.svg";
 import ChevronRightIcon from "@assets/icons/chevron-right.svg";
-import { Color } from "../_lib/medicationFormSchema";
+import { Color } from "@prisma/client";
 import { useState } from "react";
 import { DropdownMenu, AlertDialog } from "radix-ui";
 import EditIcon from "@assets/icons/edit.svg";

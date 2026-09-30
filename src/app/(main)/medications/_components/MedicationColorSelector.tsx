@@ -13,7 +13,7 @@ import RedRoundTabletIcon from "@assets/icons/medication/color/RoundTablet/red.s
 import WhiteRoundTabletIcon from "@assets/icons/medication/color/RoundTablet/white.svg";
 import YellowRoundTabletIcon from "@assets/icons/medication/color/RoundTablet/yellow.svg";
 
-import { Color } from "../_lib/medicationFormSchema";
+import { Color } from "@prisma/client";
 
 type MedicationColorSelectorProps = {
   mode: "tablet" | "roundTablet";
