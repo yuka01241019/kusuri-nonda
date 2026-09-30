@@ -1,9 +1,12 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/app/_lib/prisma";
-import { handleApiError } from "@/utils/handleApiError ";
+import { handleApiError } from "@/utils/handleApiError";
 import { supabase } from "@/utils/supabase";
-import { Color } from "@/app/(main)/medications/_lib/medicationFormSchema";
-import { Form } from "@/app/(main)/medications/_lib/medicationFormSchema";
+import { Form, Color } from "@prisma/client";
+import {
+  PostMedicationResponse,
+  GetMedicationsResponse,
+} from "@/app/_types/medication/medication";
 
 export type CreateMedicationRequest = {
   name: string;
@@ -39,8 +42,14 @@ export const POST = async (request: NextRequest) => {
 
     const medication = await prisma.medication.create({
       data: { userId: dbUser.id, name, form, color },
+      select: {
+        id: true,
+        name: true,
+        form: true,
+        color: true,
+      },
     });
-    return NextResponse.json(
+    return NextResponse.json<PostMedicationResponse>(
       { message: "薬を登録しました", medication },
       { status: 200 },
     );
@@ -77,6 +86,7 @@ export const GET = async (request: NextRequest) => {
     const [medications, totalCount] = await Promise.all([
       prisma.medication.findMany({
         where: { userId: dbUser.id },
+        select: { id: true, name: true, form: true, color: true },
         orderBy: { createdAt: "desc" },
         skip,
         take: pageSize,
@@ -87,7 +97,7 @@ export const GET = async (request: NextRequest) => {
     ]);
     //全部で何ページあるか
     const totalPages = Math.ceil(totalCount / pageSize);
-    return NextResponse.json(
+    return NextResponse.json<GetMedicationsResponse>(
       { medications, pagination: { page, pageSize, totalCount, totalPages } },
       { status: 200 },
     );

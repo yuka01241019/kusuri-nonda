@@ -14,3 +14,11 @@ input[type="date"] {
   -webkit-appearance: none;
   width: 100%;
 }
+
+html {
+  overflow-y: scroll;
+}
+
+body {
+  width: 100vw;
+}

@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/app/_lib/prisma";
 import { CreateUserRequest } from "@/app/_types/user/CreateUser";
-import { handleApiError } from "@/utils/handleApiError ";
+import { handleApiError } from "@/utils/handleApiError";
 import { supabase } from "@/utils/supabase";
 
 //ユーザー新規作成API
@@ -11,7 +11,7 @@ export const POST = async (request: NextRequest) => {
   if (error || !data?.user) {
     return NextResponse.json(
       { message: error?.message || "認証に失敗しました" },
-      { status: 400 }
+      { status: 400 },
     );
   }
   try {
@@ -23,7 +23,7 @@ export const POST = async (request: NextRequest) => {
     if (existingUser) {
       return NextResponse.json(
         { message: "すでに登録されています" },
-        { status: 200 }
+        { status: 200 },
       );
     }
     const user = await prisma.user.create({
@@ -31,7 +31,7 @@ export const POST = async (request: NextRequest) => {
     });
     return NextResponse.json(
       { message: "新規作成しました", user },
-      { status: 201 }
+      { status: 201 },
     );
   } catch (error) {
     return handleApiError(error);
@@ -45,7 +45,7 @@ export const GET = async (request: NextRequest) => {
   if (error || !data?.user) {
     return NextResponse.json(
       { message: error?.message || "認証に失敗しました" },
-      { status: 400 }
+      { status: 400 },
     );
   }
   try {
@@ -55,7 +55,7 @@ export const GET = async (request: NextRequest) => {
     if (!dbUser) {
       return NextResponse.json(
         { message: "ユーザーが見つかりません" },
-        { status: 400 }
+        { status: 400 },
       );
     }
     return NextResponse.json({ user: dbUser }, { status: 200 });

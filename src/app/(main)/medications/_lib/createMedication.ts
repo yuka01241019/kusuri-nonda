@@ -1,11 +1,11 @@
 import { CreateMedicationRequest } from "@/app/api/medications/route";
-import { Medication } from "@/app/_types/medication/CreateMedication";
+import { PostMedicationResponse } from "@/app/_types/medication/medication";
 import { api } from "@/utils/api";
 
 export const createMedication = async (
   data: CreateMedicationRequest,
-): Promise<Medication> => {
-  return api.post<Medication, CreateMedicationRequest>(
+): Promise<PostMedicationResponse> => {
+  return api.post<PostMedicationResponse, CreateMedicationRequest>(
     "/api/medications",
     data,
   );
