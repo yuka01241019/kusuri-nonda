@@ -1,23 +1,18 @@
 "use client";
 import { GetMedicationsResponse } from "@/app/_types/medication/medication";
-import { api } from "@/utils/api";
+import { useFetch } from "@/app/_hooks/useFetch";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { MedicationItem } from "./MedicationItem";
 import { FormButton } from "@/app/_components/FormButton";
 import AddIcon from "@assets/icons/add.svg";
-import useSWR from "swr";
 import { LoadingSpinner } from "@/app/_components/LoadingSpinner";
 
 const MedicationList = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const router = useRouter();
-  const fetcher = (url: string) => {
-    return api.get<GetMedicationsResponse>(url);
-  };
-  const { data, isLoading, mutate } = useSWR(
+  const { data, isLoading, mutate } = useFetch<GetMedicationsResponse>(
     `/api/medications?page=${currentPage}`,
-    fetcher,
   );
   // SWRから薬一覧を取り出す。まだ取得できていなければ、ひとまず空の配列にする
   const medications = data?.medications ?? [];

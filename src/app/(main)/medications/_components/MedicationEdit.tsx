@@ -1,7 +1,6 @@
 "use client";
 
-import useSWR from "swr";
-import { api } from "@/utils/api";
+import { useFetch } from "@/app/_hooks/useFetch";
 import { GetMedicationResponse } from "@/app/_types/medication/medication";
 import { LoadingSpinner } from "@/app/_components/LoadingSpinner";
 import { MedicationForm } from "./MedicationForm";
@@ -11,10 +10,9 @@ type MedicationEditProps = {
 };
 
 const MedicationEdit = ({ id }: MedicationEditProps) => {
-  const fetcher = (url: string) => {
-    return api.get<GetMedicationResponse>(url);
-  };
-  const { data, isLoading } = useSWR(`/api/medications/${id}`, fetcher);
+  const { data, isLoading } = useFetch<GetMedicationResponse>(
+    `/api/medications/${id}`,
+  );
   const medication = data?.medication ?? null;
   if (isLoading) {
     return (
