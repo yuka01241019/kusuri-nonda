@@ -19,3 +19,9 @@ export type PostPetResponse = {
 export type GetPetsResponse = {
   pets: Pet[];
 };
+
+// GET個別のレスポンス
+export type GetPetResponse = {
+  message: string;
+  pet: Pet;
+};
