@@ -1,5 +1,5 @@
 import { CreatePetRequest } from "@/app/api/pets/route";
-import { Pet } from "@/app/_types/pet/CreatePet";
+import { Pet } from "@/app/_types/pet/pet";
 import { api } from "@/utils/api";
 
 export const useCreatePet = () => {
