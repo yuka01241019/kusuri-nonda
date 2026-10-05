@@ -12,13 +12,13 @@ type PetInfoProps = {
   imagePath: string | null;
 };
 
-export const PetInfo = ({
+export const PetInfo: React.FC<PetInfoProps> = ({
   name,
   gender,
   birthday,
   adoptedAt,
   imagePath,
-}: PetInfoProps) => {
+}) => {
   const [publicUrl, setPublicUrl] = useState<string | null>(null);
   useEffect(() => {
     if (!imagePath) return;
@@ -40,9 +40,9 @@ export const PetInfo = ({
             <Image
               src={publicUrl}
               alt={`${name}の写真`}
-              width={80}
-              height={80}
-              className="w-[80px] h-[80px] object-cover rounded-full"
+              width={85}
+              height={85}
+              className="w-[85px] h-[85px] object-cover rounded-full"
             />
           )}
         </div>
