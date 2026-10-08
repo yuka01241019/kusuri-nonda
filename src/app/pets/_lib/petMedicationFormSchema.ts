@@ -1,11 +1,14 @@
 import { z } from "zod";
+import { Weekday, DayType } from "@prisma/client";
 
 // ペット服薬スケジュール（登録/編集）用バリデーション設定
 export const petMedicationFormSchema = z
   .object({
     medicationId: z.string().min(1, "薬を選択してください"),
-    dayType: z.string().min(1, "頻度を選択してください"),
-    weekdays: z.array(z.string()),
+    dayType: z.nativeEnum(DayType, {
+      errorMap: () => ({ message: "頻度を選択してください" }),
+    }),
+    weekdays: z.array(z.nativeEnum(Weekday)),
     times: z.array(z.string()).min(1, "時間を選択してください"),
   })
   // DAILYは曜日未選択でも可、WEEKLYの場合は曜日を1つ以上選択必須にする
