@@ -41,6 +41,7 @@ export const WeekdaySelector: React.FC<WeekdaySelectorProps> = ({
             value={Weekday.MON}
             checked={value.includes(Weekday.MON)}
             onChange={() => handleChange(Weekday.MON)}
+            disabled={disabled}
             className="sr-only peer"
           />
           <span className="flex items-center justify-center w-9 h-9 rounded-full bg-lightPink cursor-pointer transition-colors peer-checked:bg-darkPink peer-checked:text-white">
@@ -53,6 +54,7 @@ export const WeekdaySelector: React.FC<WeekdaySelectorProps> = ({
             value={Weekday.TUE}
             checked={value.includes(Weekday.TUE)}
             onChange={() => handleChange(Weekday.TUE)}
+            disabled={disabled}
             className="sr-only peer"
           />
           <span className="flex items-center justify-center w-9 h-9 rounded-full bg-lightPink cursor-pointer transition-colors peer-checked:bg-darkPink peer-checked:text-white">
@@ -65,6 +67,7 @@ export const WeekdaySelector: React.FC<WeekdaySelectorProps> = ({
             value={Weekday.WED}
             checked={value.includes(Weekday.WED)}
             onChange={() => handleChange(Weekday.WED)}
+            disabled={disabled}
             className="sr-only peer"
           />
           <span className="flex items-center justify-center w-9 h-9 rounded-full bg-lightPink cursor-pointer transition-colors peer-checked:bg-darkPink peer-checked:text-white">
@@ -77,6 +80,7 @@ export const WeekdaySelector: React.FC<WeekdaySelectorProps> = ({
             value={Weekday.THU}
             checked={value.includes(Weekday.THU)}
             onChange={() => handleChange(Weekday.THU)}
+            disabled={disabled}
             className="sr-only peer"
           />
           <span className="flex items-center justify-center w-9 h-9 rounded-full bg-lightPink cursor-pointer transition-colors peer-checked:bg-darkPink peer-checked:text-white">
@@ -89,6 +93,7 @@ export const WeekdaySelector: React.FC<WeekdaySelectorProps> = ({
             value={Weekday.FRI}
             checked={value.includes(Weekday.FRI)}
             onChange={() => handleChange(Weekday.FRI)}
+            disabled={disabled}
             className="sr-only peer"
           />
           <span className="flex items-center justify-center w-9 h-9 rounded-full bg-lightPink cursor-pointer transition-colors peer-checked:bg-darkPink peer-checked:text-white">
@@ -101,6 +106,7 @@ export const WeekdaySelector: React.FC<WeekdaySelectorProps> = ({
             value={Weekday.SAT}
             checked={value.includes(Weekday.SAT)}
             onChange={() => handleChange(Weekday.SAT)}
+            disabled={disabled}
             className="sr-only peer"
           />
           <span className="flex items-center justify-center w-9 h-9 rounded-full bg-lightPink cursor-pointer transition-colors peer-checked:bg-darkPink peer-checked:text-white">
@@ -113,6 +119,7 @@ export const WeekdaySelector: React.FC<WeekdaySelectorProps> = ({
             value={Weekday.SUN}
             checked={value.includes(Weekday.SUN)}
             onChange={() => handleChange(Weekday.SUN)}
+            disabled={disabled}
             className="sr-only peer"
           />
           <span className="flex items-center justify-center w-9 h-9 rounded-full bg-lightPink cursor-pointer transition-colors peer-checked:bg-darkPink peer-checked:text-white">
