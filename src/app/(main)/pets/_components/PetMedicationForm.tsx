@@ -8,12 +8,11 @@ import {
   PetMedicationFormData,
   petMedicationFormSchema,
 } from "@/app/pets/_lib/petMedicationFormSchema";
-import { useState } from "react";
 import { FormButton } from "@/app/_components/FormButton";
 import { WeekdaySelector } from "./WeekdaySelector";
+import { TimeSelector } from "./TimeSelector";
 
 export const PetMedicationForm: React.FC = () => {
-  const [isTimeOpen, setIsTimeOpen] = useState(false);
   const { data, isLoading } = useFetch<GetMedicationsResponse>(
     `/api/medications?all=true`,
   );
@@ -33,20 +32,6 @@ export const PetMedicationForm: React.FC = () => {
     },
   });
   const dayType = watch("dayType");
-  const timeOptions = [];
-  for (let i = 0; i < 24; i++) {
-    // numberからstringに変換し、文字列が2文字になるまで、先頭を "0" で埋める
-    const hour = i.toString().padStart(2, "0");
-    timeOptions.push(`${hour}:00`);
-    timeOptions.push(`${hour}:30`);
-  }
-  const times = watch("times");
-  const removeTime = (timeToRemove: string) => {
-    const newTime = times.filter((time) => {
-      return time !== timeToRemove;
-    });
-    setValue("times", newTime);
-  };
   const onSubmit = (data: PetMedicationFormData) => {
     console.log("データ", data);
   };
@@ -117,71 +102,16 @@ export const PetMedicationForm: React.FC = () => {
                   error={errors.weekdays?.message}
                 />
               )}
-              <div className="relative mb-0.5">
-                <label className="text-small">時間</label>
-                <button
-                  type="button"
-                  onClick={() => {
-                    setIsTimeOpen(!isTimeOpen);
-                  }}
-                  className={`flex flex-wrap items-center gap-2 w-full min-h-[44px] border rounded-[8px] px-2.5 py-2 mt-[4px]
-    ${errors.times ? "border-red-500" : "border-textMain"}`}
-                >
-                  {/* 選択した時間 */}
-                  {/* timesは配列 */}
-                  {times.length > 0
-                    ? times.map((time) => {
-                        return (
-                          <span
-                            key={time}
-                            className="px-2 py-1 bg-gray-200 rounded-full"
-                          >
-                            {time}
-                            <span
-                              onClick={(e) => {
-                                // ×をクリックしたイベントを親まで伝えない
-                                e.stopPropagation();
-                                removeTime(time);
-                              }}
-                            >
-                              {" "}
-                              ×
-                            </span>
-                          </span>
-                        );
-                      })
-                    : "選択してください"}
-                </button>
-                {isTimeOpen && (
-                  <div className="absolute w-full max-h-60 overflow-y-auto bg-white border border-textMain rounded-[8px]">
-                    {/* 時間一覧 */}
-                    {timeOptions.map((timeOption) => {
-                      return (
-                        <label
-                          key={timeOption}
-                          className="flex items-center gap-2 px-3 py-2"
-                        >
-                          <input
-                            type="checkbox"
-                            value={timeOption}
-                            {...register("times")}
-                          />
-                          {timeOption}
-                        </label>
-                      );
-                    })}
-                  </div>
-                )}
-                {errors.times ? (
-                  <p className="h-[18px] mt-1 text-[12px] text-red-600 leading-tight">
-                    {errors.times.message}
-                  </p>
-                ) : (
-                  <p className="h-[18px] mt-1 text-[12px] invisible leading-tight">
-                    placeholder
-                  </p>
-                )}
-              </div>
+              <TimeSelector
+                value={watch("times")}
+                onChange={(selectedTimes) =>
+                  setValue("times", selectedTimes, {
+                    shouldValidate: true,
+                    shouldDirty: true,
+                  })
+                }
+                error={errors.times?.message}
+              />
               <div className="mt-[26px] flex justify-center">
                 <FormButton text="追加する" variant="secondary" />
               </div>
