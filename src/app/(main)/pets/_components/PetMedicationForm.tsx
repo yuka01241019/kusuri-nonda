@@ -78,6 +78,7 @@ export const PetMedicationForm: React.FC = () => {
                       shouldDirty: true,
                     })
                   }
+                  disabled={isSubmitting}
                   error={errors.weekdays?.message}
                 />
               )}
@@ -89,6 +90,7 @@ export const PetMedicationForm: React.FC = () => {
                     shouldDirty: true,
                   })
                 }
+                disabled={isSubmitting}
                 error={errors.times?.message}
               />
               <div className="mt-[26px] flex justify-center">
