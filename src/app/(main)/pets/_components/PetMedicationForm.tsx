@@ -11,15 +11,21 @@ import {
 import { FormButton } from "@/app/_components/FormButton";
 import { WeekdaySelector } from "./WeekdaySelector";
 import { TimeSelector } from "./TimeSelector";
+import { FormSelect } from "./FormSelect";
 
 export const PetMedicationForm: React.FC = () => {
   const { data, isLoading } = useFetch<GetMedicationsResponse>(
     `/api/medications?all=true`,
   );
+  // GETした薬のデータを子が受け取れる形に変換
+  const medicationOptions =
+    data?.medications.map((medication) => {
+      return { value: String(medication.id), label: medication.name };
+    }) ?? [];
   const {
     register,
     handleSubmit,
-    formState: { errors },
+    formState: { errors, isSubmitting },
     watch,
     setValue,
   } = useForm<PetMedicationFormData>({
@@ -44,51 +50,24 @@ export const PetMedicationForm: React.FC = () => {
               薬スケジュールを追加
             </h1>
             <form onSubmit={handleSubmit(onSubmit)}>
-              <div className="w-full mb-0.5">
-                <label className="text-small">薬の名前</label>
-                <select
-                  {...register("medicationId")}
-                  className={`w-full h-[44px] border ${errors.medicationId ? "border-red-500" : "border-textMain"} rounded-[8px] px-2.5 py-2 mt-[4px] bg-white`}
-                >
-                  <option value="">選択してください</option>
-                  {data?.medications.map((medication) => {
-                    return (
-                      <option key={medication.id} value={medication.id}>
-                        {medication.name}
-                      </option>
-                    );
-                  })}
-                </select>
-                {errors.medicationId ? (
-                  <p className="h-[18px] mt-1 text-[12px] text-red-600 leading-tight">
-                    {errors.medicationId?.message}
-                  </p>
-                ) : (
-                  <p className="h-[18px] mt-1 text-[12px] invisible leading-tight">
-                    placeholder
-                  </p>
-                )}
-              </div>
-              <div className="w-full mb-0.5">
-                <label className="text-small">頻度</label>
-                <select
-                  {...register("dayType")}
-                  className={`w-full h-[44px] border ${errors.dayType ? "border-red-500" : "border-textMain"} rounded-[8px] px-2.5 py-2 mt-[4px] bg-white`}
-                >
-                  <option value="">選択してください</option>
-                  <option value="DAILY">毎日</option>
-                  <option value="WEEKLY">曜日指定</option>
-                </select>
-                {errors.dayType ? (
-                  <p className="h-[18px] mt-1 text-[12px] text-red-600 leading-tight">
-                    {errors.dayType?.message}
-                  </p>
-                ) : (
-                  <p className="h-[18px] mt-1 text-[12px] invisible leading-tight">
-                    placeholder
-                  </p>
-                )}
-              </div>
+              <FormSelect
+                label="薬の名前"
+                options={medicationOptions}
+                {...register("medicationId")}
+                error={errors.medicationId?.message}
+                disabled={isSubmitting || isLoading}
+              />
+              <FormSelect
+                label="頻度"
+                options={[
+                  { value: "DAILY", label: "毎日" },
+                  { value: "WEEKLY", label: "曜日指定" },
+                ]}
+                {...register("dayType")}
+                error={errors.dayType?.message}
+                disabled={isSubmitting}
+              />
+
               {/* dayTypeがWEEKLY(曜日指定)なら、曜日を表示 */}
               {dayType === "WEEKLY" && (
                 <WeekdaySelector
