@@ -75,6 +75,8 @@ export const GET = async (request: NextRequest) => {
         { status: 400 },
       );
     }
+    //全件取得かどうか
+    const all = request.nextUrl.searchParams.get("all") === "true";
     //URLからpageを取得
     //指定されていなければ1ページ目にする
     const page = parseInt(request.nextUrl.searchParams.get("page") ?? "1");
@@ -88,8 +90,9 @@ export const GET = async (request: NextRequest) => {
         where: { userId: dbUser.id },
         select: { id: true, name: true, form: true, color: true },
         orderBy: { createdAt: "desc" },
-        skip,
-        take: pageSize,
+        //全件取得の場合はスキップ・取得件数を指定しない
+        skip: all ? undefined : skip,
+        take: all ? undefined : pageSize,
       }),
       prisma.medication.count({
         where: { userId: dbUser.id },
