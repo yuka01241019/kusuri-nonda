@@ -67,7 +67,7 @@ enum Color {
   ORANGE
 }
 
-//MedicationとMedicationSchedule中間テーブル
+//薬と服薬スケジュールの中間テーブル
 model MedicationScheduleLink {
   id                   Int                @id @default(autoincrement())
   medicationId         Int
@@ -78,12 +78,12 @@ model MedicationScheduleLink {
   medicationSchedule   MedicationSchedule @relation(fields: [medicationScheduleId], references: [id], onDelete: Cascade)
 }
 
-//薬スケジュールテーブル
+//薬スケジュールテーブル（対象ペット・服薬頻度・曜日）
 model MedicationSchedule {
   id                      Int                      @id @default(autoincrement())
   petId                   Int
   dayType                 DayType
-  weekday                 Weekday?
+  weekdays                 Weekday[]
   createdAt               DateTime                 @default(now())
   updatedAt               DateTime                 @updatedAt
   pet                     Pet                      @relation(fields: [petId], references: [id], onDelete: Cascade)
@@ -109,11 +109,11 @@ enum Weekday {
   SUN
 }
 
-//薬投薬時間テーブル
+//薬投薬時間テーブル（スケジュールごとの服薬時刻）
 model MedicationScheduleTime {
   id                   Int                @id @default(autoincrement())
   medicationScheduleId Int
-  time                 DateTime
+  time                 String
   createdAt            DateTime           @default(now())
   updatedAt            DateTime           @updatedAt
   medicationSchedule   MedicationSchedule @relation(fields: [medicationScheduleId], references: [id], onDelete: Cascade)
