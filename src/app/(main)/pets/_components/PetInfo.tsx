@@ -33,8 +33,8 @@ export const PetInfo: React.FC<PetInfoProps> = ({
     fetchImageUrl();
   }, [imagePath]);
   return (
-    <div className="bg-lightPink text-textMain text-small p-4">
-      <div className="flex items-start gap-4">
+    <div className="bg-lightPink text-textMain text-small pt-10">
+    <div className="w-full max-w-[350px] sm:max-w-[390px] md:max-w-[400px] lg:max-w-[420px] mx-auto flex items-start gap-4">
         <div>
           {publicUrl && (
             <Image
