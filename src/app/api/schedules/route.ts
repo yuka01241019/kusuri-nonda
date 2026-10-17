@@ -3,6 +3,7 @@ import { prisma } from "@/app/_lib/prisma";
 import { handleApiError } from "@/utils/handleApiError";
 import { supabase } from "@/utils/supabase";
 import { DayType, Weekday } from "@prisma/client";
+import { PostMedicationScheduleResponse } from "@/app/_types/schedule/schedule";
 
 export type CreateMedicationScheduleRequest = {
   petId: number;
@@ -148,8 +149,9 @@ export const POST = async (request: NextRequest) => {
         medicationScheduleTimes: { create: scheduleTimes },
         medicationScheduleLinks: { create: { medicationId } },
       },
+      select: { id: true, petId: true, dayType: true, weekdays: true },
     });
-    return NextResponse.json(
+    return NextResponse.json<PostMedicationScheduleResponse>(
       { message: "服薬スケジュールを登録しました", medicationSchedule },
       { status: 200 },
     );
