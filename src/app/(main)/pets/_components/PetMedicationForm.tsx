@@ -12,6 +12,7 @@ import { FormButton } from "@/app/_components/FormButton";
 import { WeekdaySelector } from "./WeekdaySelector";
 import { TimeSelector } from "./TimeSelector";
 import { FormSelect } from "./FormSelect";
+import { createMedicationSchedule } from "../_lib/createMedicationSchedule";
 
 type PetMedicationFormProps = {
   petId: number;
@@ -46,6 +47,12 @@ export const PetMedicationForm: React.FC<PetMedicationFormProps> = ({
   const dayType = watch("dayType");
   const onSubmit = async (data: PetMedicationFormData) => {
     try {
+      await createMedicationSchedule({
+        ...data,
+        petId,
+        // 文字列の薬IDを数値に変換して上書きする
+        medicationId: Number(data.medicationId),
+      });
     } catch (error) {}
   };
   return (
