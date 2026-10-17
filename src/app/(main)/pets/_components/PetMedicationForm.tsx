@@ -13,7 +13,13 @@ import { WeekdaySelector } from "./WeekdaySelector";
 import { TimeSelector } from "./TimeSelector";
 import { FormSelect } from "./FormSelect";
 
-export const PetMedicationForm: React.FC = () => {
+type PetMedicationFormProps = {
+  petId: number;
+};
+
+export const PetMedicationForm: React.FC<PetMedicationFormProps> = ({
+  petId,
+}) => {
   const { data, isLoading } = useFetch<GetMedicationsResponse>(
     `/api/medications?all=true`,
   );
@@ -38,8 +44,9 @@ export const PetMedicationForm: React.FC = () => {
     },
   });
   const dayType = watch("dayType");
-  const onSubmit = (data: PetMedicationFormData) => {
-    console.log("データ", data);
+  const onSubmit = async (data: PetMedicationFormData) => {
+    try {
+    } catch (error) {}
   };
   return (
     <div className="bg-lightPink min-h-screen flex justify-center items-start py-10">
