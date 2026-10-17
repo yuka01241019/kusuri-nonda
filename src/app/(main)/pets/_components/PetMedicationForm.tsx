@@ -13,6 +13,8 @@ import { WeekdaySelector } from "./WeekdaySelector";
 import { TimeSelector } from "./TimeSelector";
 import { FormSelect } from "./FormSelect";
 import { createMedicationSchedule } from "../_lib/createMedicationSchedule";
+import toast from "react-hot-toast";
+import { useRouter } from "next/navigation";
 
 type PetMedicationFormProps = {
   petId: number;
@@ -21,6 +23,7 @@ type PetMedicationFormProps = {
 export const PetMedicationForm: React.FC<PetMedicationFormProps> = ({
   petId,
 }) => {
+  const router = useRouter();
   const { data, isLoading } = useFetch<GetMedicationsResponse>(
     `/api/medications?all=true`,
   );
@@ -46,6 +49,7 @@ export const PetMedicationForm: React.FC<PetMedicationFormProps> = ({
   });
   const dayType = watch("dayType");
   const onSubmit = async (data: PetMedicationFormData) => {
+    const toastId = toast.loading("登録中です…");
     try {
       await createMedicationSchedule({
         ...data,
@@ -53,7 +57,15 @@ export const PetMedicationForm: React.FC<PetMedicationFormProps> = ({
         // 文字列の薬IDを数値に変換して上書きする
         medicationId: Number(data.medicationId),
       });
-    } catch (error) {}
+      toast.success("服薬スケジュールを登録しました！", { id: toastId });
+      router.push("/");
+    } catch (error) {
+      if (error instanceof Error) {
+        toast.error(error.message, { id: toastId });
+      } else {
+        toast.error("予期せぬエラーが発生しました", { id: toastId });
+      }
+    }
   };
   return (
     <div className="bg-lightPink min-h-screen flex justify-center items-start py-10">
