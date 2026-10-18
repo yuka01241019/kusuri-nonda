@@ -3,6 +3,8 @@ import { supabase } from "@/utils/supabase";
 import Image from "next/image";
 import { useState, useEffect } from "react";
 import dayjs from "dayjs";
+import Link from "next/link";
+import EditIcon from "@assets/icons/edit.svg";
 
 type PetInfoProps = {
   name: string;
@@ -34,7 +36,13 @@ export const PetInfo: React.FC<PetInfoProps> = ({
   }, [imagePath]);
   return (
     <div className="bg-lightPink text-textMain text-small pt-10">
-    <div className="w-full max-w-[350px] sm:max-w-[390px] md:max-w-[400px] lg:max-w-[420px] mx-auto flex items-start gap-4">
+      <div className="relative w-full max-w-[350px] sm:max-w-[390px] md:max-w-[400px] lg:max-w-[420px] mx-auto flex items-start gap-4">
+        <div className="absolute top-1 right-0">
+          {/* 仮アドレス */}
+          <Link href="/" aria-label="ペット情報を編集">
+            <EditIcon />
+          </Link>
+        </div>
         <div>
           {publicUrl && (
             <Image
