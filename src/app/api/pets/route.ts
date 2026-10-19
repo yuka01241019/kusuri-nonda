@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/app/_lib/prisma";
 import { handleApiError } from "@/utils/handleApiError";
 import { supabase } from "@/utils/supabase";
+import { PostPetResponse, GetPetsResponse } from "@/app/_types/pet/pet";
 
 //クライアント→APIに送られてくるデータ（リクエスト）
 export type CreatePetRequest = {
@@ -50,9 +51,24 @@ export const POST = async (request: NextRequest) => {
         adoptedAt: adoptedAt ? new Date(adoptedAt) : null,
         imagePath,
       },
+      select: {
+        id: true,
+        name: true,
+        species: true,
+        gender: true,
+        birthday: true,
+        adoptedAt: true,
+        imagePath: true,
+      },
     });
-    return NextResponse.json(
-      { message: "ペットを登録しました", pet },
+    // 日付をAPIレスポンス用の文字列に変換(Dateをstringに変換)
+    const responsePet = {
+      ...pet,
+      birthday: pet.birthday?.toISOString() ?? null,
+      adoptedAt: pet.adoptedAt?.toISOString() ?? null,
+    };
+    return NextResponse.json<PostPetResponse>(
+      { message: "ペットを登録しました", pet: responsePet },
       { status: 200 },
     );
   } catch (error) {
@@ -74,9 +90,29 @@ export const GET = async (request: NextRequest) => {
           supabaseUserId: data.user.id,
         },
       },
+      select: {
+        id: true,
+        name: true,
+        species: true,
+        gender: true,
+        birthday: true,
+        adoptedAt: true,
+        imagePath: true,
+      },
       orderBy: { createdAt: "desc" },
     });
-    return NextResponse.json({ pets }, { status: 200 });
+    // 各ペットの日付を文字列に変換して、APIレスポンス用の新しい配列を作成
+    const responsePets = pets.map((pet) => {
+      return {
+        ...pet,
+        birthday: pet.birthday?.toISOString() ?? null,
+        adoptedAt: pet.adoptedAt?.toISOString() ?? null,
+      };
+    });
+    return NextResponse.json<GetPetsResponse>(
+      { pets: responsePets },
+      { status: 200 },
+    );
   } catch (error) {
     return handleApiError(error);
   }

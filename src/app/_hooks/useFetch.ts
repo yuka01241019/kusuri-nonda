@@ -7,6 +7,6 @@ export const useFetch = <TResponse>(url: string) => {
   const fetcher = (url: string) => {
     return api.get<TResponse>(url);
   };
-  const { data, isLoading, mutate } = useSWR(url, fetcher);
-  return { data, isLoading, mutate };
+  const { data, isLoading, error, mutate } = useSWR(url, fetcher);
+  return { data, isLoading, error, mutate };
 };

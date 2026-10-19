@@ -1,0 +1,72 @@
+"use client";
+import { supabase } from "@/utils/supabase";
+import Image from "next/image";
+import { useState, useEffect } from "react";
+import dayjs from "dayjs";
+import Link from "next/link";
+import EditIcon from "@assets/icons/edit.svg";
+
+type PetInfoProps = {
+  name: string;
+  gender: string | null;
+  birthday: string | null;
+  adoptedAt: string | null;
+  imagePath: string | null;
+};
+
+export const PetInfo: React.FC<PetInfoProps> = ({
+  name,
+  gender,
+  birthday,
+  adoptedAt,
+  imagePath,
+}) => {
+  const [publicUrl, setPublicUrl] = useState<string | null>(null);
+  useEffect(() => {
+    if (!imagePath) return;
+    const fetchImageUrl = async () => {
+      const {
+        data: { publicUrl },
+      } = supabase.storage.from("pet-imageurl").getPublicUrl(imagePath);
+
+      // 取得した画像URLをstateに保存
+      setPublicUrl(publicUrl);
+    };
+    fetchImageUrl();
+  }, [imagePath]);
+  return (
+    <div className="bg-lightPink text-textMain text-small pt-10">
+      <div className="relative w-full max-w-[350px] sm:max-w-[390px] md:max-w-[400px] lg:max-w-[420px] mx-auto flex items-start gap-4">
+        <div className="absolute top-1 right-0">
+          {/* 仮アドレス */}
+          <Link href="/" aria-label="ペット情報を編集">
+            <EditIcon />
+          </Link>
+        </div>
+        <div>
+          {publicUrl && (
+            <Image
+              src={publicUrl}
+              alt={`${name}の写真`}
+              width={85}
+              height={85}
+              className="w-[85px] h-[85px] object-cover rounded-full"
+            />
+          )}
+        </div>
+        <div>
+          <div className="text-heading1">{name}</div>
+          <div>
+            生年月日:
+            {birthday ? dayjs(birthday).format("YYYY年MM月DD日") : "未登録"}
+            {gender ? (gender === "おとこのこ♂" ? "♂" : "♀") : "未登録"}
+          </div>
+          <div>
+            お迎えした日:
+            {adoptedAt ? dayjs(adoptedAt).format("YYYY年MM月DD日") : "未登録"}
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};
