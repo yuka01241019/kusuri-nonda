@@ -21,18 +21,41 @@ export const PetInfo: React.FC<PetInfoProps> = ({
   adoptedAt,
   imagePath,
 }) => {
-  const [publicUrl, setPublicUrl] = useState<string | null>(null);
+  const [imageUrl, setImageUrl] = useState<string | null>(null);
   useEffect(() => {
-    if (!imagePath) return;
+    if (!imagePath) {
+      setImageUrl(null);
+      return;
+    }
+    setImageUrl(null);
+    // ブラウザ内で作った画像URLを覚えておくための変数
+    let objectUrl: string | null = null;
+    // 画像の取得が終わる前に、ページを離れたり別のペットに切り替えたりしたかを判断するための変数
+    let cancelled = false;
     const fetchImageUrl = async () => {
-      const {
-        data: { publicUrl },
-      } = supabase.storage.from("pet-imageurl").getPublicUrl(imagePath);
-
+      const { data, error } = await supabase.storage
+        .from("pet-imageurl")
+        .download(imagePath);
+      if (cancelled) {
+        return;
+      }
+      if (error) {
+        console.error("画像のダウンロードに失敗しました:", error);
+        setImageUrl(null);
+        return;
+      }
+      objectUrl = URL.createObjectURL(data);
       // 取得した画像URLをstateに保存
-      setPublicUrl(publicUrl);
+      setImageUrl(objectUrl);
     };
     fetchImageUrl();
+    return () => {
+      cancelled = true;
+      // 不要になったURLを解放
+      if (objectUrl) {
+        URL.revokeObjectURL(objectUrl);
+      }
+    };
   }, [imagePath]);
   return (
     <div className="bg-lightPink text-textMain text-small pt-10">
@@ -44,12 +67,14 @@ export const PetInfo: React.FC<PetInfoProps> = ({
           </Link>
         </div>
         <div>
-          {publicUrl && (
+          {imageUrl && (
             <Image
-              src={publicUrl}
+              src={imageUrl}
               alt={`${name}の写真`}
               width={85}
               height={85}
+              // Blob URLはNext.jsの画像最適化を行わず、そのまま表示する
+              unoptimized
               className="w-[85px] h-[85px] object-cover rounded-full"
             />
           )}

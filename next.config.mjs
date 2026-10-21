@@ -5,7 +5,7 @@ const nextConfig = {
       {
         protocol: "https",
         hostname: "ccnsbkxeslwnlhnfpfpl.supabase.co",
-        pathname: "/storage/v1/object/public/**", // publicバケット内の全てを許可
+        pathname: "/storage/v1/object/sign/pet-imageurl/**",
       },
     ],
   },
