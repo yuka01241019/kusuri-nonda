@@ -5,6 +5,7 @@ import { useState, useEffect } from "react";
 import dayjs from "dayjs";
 import Link from "next/link";
 import EditIcon from "@assets/icons/edit.svg";
+import NoImageIcon from "@assets/icons/no-image.svg";
 
 type PetInfoProps = {
   name: string;
@@ -67,7 +68,7 @@ export const PetInfo: React.FC<PetInfoProps> = ({
           </Link>
         </div>
         <div>
-          {imageUrl && (
+          {imageUrl ? (
             <Image
               src={imageUrl}
               alt={`${name}の写真`}
@@ -77,6 +78,8 @@ export const PetInfo: React.FC<PetInfoProps> = ({
               unoptimized
               className="w-[85px] h-[85px] object-cover rounded-full"
             />
+          ) : (
+            <NoImageIcon className="w-[85px] h-[85px]" />
           )}
         </div>
         <div>
