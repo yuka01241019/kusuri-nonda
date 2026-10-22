@@ -21,12 +21,13 @@ export const PetSwitcherHeader: React.FC = () => {
       <div className="flex px-4 gap-3">
         {otherPets.map((pet) => {
           return (
-            <PetSwitcherIcon
-              key={pet.id}
-              id={pet.id}
-              name={pet.name}
-              imagePath={pet.imagePath}
-            />
+            <Link href={`/pets/${pet.id}/medications/new`} key={pet.id}>
+              <PetSwitcherIcon
+                id={pet.id}
+                name={pet.name}
+                imagePath={pet.imagePath}
+              />
+            </Link>
           );
         })}
       </div>
