@@ -1,10 +1,11 @@
 "use client";
-import { supabase } from "@/utils/supabase";
+
 import Image from "next/image";
-import { useState, useEffect } from "react";
 import dayjs from "dayjs";
 import Link from "next/link";
 import EditIcon from "@assets/icons/edit.svg";
+import NoImageIcon from "@assets/icons/no-image.svg";
+import { useStorageImage } from "@/app/_hooks/useStorageImage";
 
 type PetInfoProps = {
   name: string;
@@ -21,19 +22,7 @@ export const PetInfo: React.FC<PetInfoProps> = ({
   adoptedAt,
   imagePath,
 }) => {
-  const [publicUrl, setPublicUrl] = useState<string | null>(null);
-  useEffect(() => {
-    if (!imagePath) return;
-    const fetchImageUrl = async () => {
-      const {
-        data: { publicUrl },
-      } = supabase.storage.from("pet-imageurl").getPublicUrl(imagePath);
-
-      // 取得した画像URLをstateに保存
-      setPublicUrl(publicUrl);
-    };
-    fetchImageUrl();
-  }, [imagePath]);
+  const imageUrl = useStorageImage("pet-imageurl", imagePath);
   return (
     <div className="bg-lightPink text-textMain text-small pt-10">
       <div className="relative w-full max-w-[350px] sm:max-w-[390px] md:max-w-[400px] lg:max-w-[420px] mx-auto flex items-start gap-4">
@@ -44,14 +33,18 @@ export const PetInfo: React.FC<PetInfoProps> = ({
           </Link>
         </div>
         <div>
-          {publicUrl && (
+          {imageUrl ? (
             <Image
-              src={publicUrl}
+              src={imageUrl}
               alt={`${name}の写真`}
               width={85}
               height={85}
+              // Blob URLはNext.jsの画像最適化を行わず、そのまま表示する
+              unoptimized
               className="w-[85px] h-[85px] object-cover rounded-full"
             />
+          ) : (
+            <NoImageIcon className="w-[85px] h-[85px]" />
           )}
         </div>
         <div>

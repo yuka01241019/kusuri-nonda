@@ -12,7 +12,7 @@ import { useRouter } from "next/navigation";
 import { MedicationShapeSelector } from "./MedicationShapeSelector";
 import { FormButton } from "@/app/_components/FormButton";
 import toast from "react-hot-toast";
-import { createMedication } from "..//_lib/createMedication";
+import { createMedication } from "../_lib/createMedication";
 import { MedicationColorSelector } from "./MedicationColorSelector";
 import { Medication } from "@/app/_types/medication/medication";
 import { updateMedication } from "../_lib/updateMedication";
