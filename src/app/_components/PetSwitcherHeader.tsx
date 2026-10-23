@@ -4,10 +4,13 @@ import Link from "next/link";
 import { useFetch } from "../_hooks/useFetch";
 import { GetPetsResponse } from "../_types/pet/pet";
 import { PetSwitcherIcon } from "./PetSwitcherIcon";
-import { useParams } from "next/navigation";
+import { useParams, usePathname } from "next/navigation";
+import HeaderFamily from "@/assets/header/headerFamily.svg";
 
 export const PetSwitcherHeader: React.FC = () => {
   const { id } = useParams();
+  const pathname = usePathname();
+  const isMedicationPage = pathname.endsWith("/medications/new");
   const { data } = useFetch<GetPetsResponse>("/api/pets");
   const pets = data?.pets ?? [];
   // URLにペットIDがある場合はそのペットを除外し、ない場合(undefined)は全員表示する
@@ -31,12 +34,18 @@ export const PetSwitcherHeader: React.FC = () => {
           );
         })}
       </div>
-      <Link
-        href="/"
-        className="absolute right-4 top-1/2 -translate-y-1/2 text-small text-white"
-      >
-        追加
-      </Link>
+      {isMedicationPage ? (
+        <Link href="/family" className="absolute right-4 top-2 p-2">
+          <HeaderFamily/>
+        </Link>
+      ) : (
+        <Link
+          href="/"
+          className="absolute right-4 top-1/2 -translate-y-1/2 text-small text-white"
+        >
+          追加
+        </Link>
+      )}
     </header>
   );
 };
