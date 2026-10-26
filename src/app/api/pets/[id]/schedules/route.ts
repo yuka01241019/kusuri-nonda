@@ -2,6 +2,7 @@ import { prisma } from "@/app/_lib/prisma";
 import { supabase } from "@/utils/supabase";
 import { NextRequest, NextResponse } from "next/server";
 import { handleApiError } from "@/utils/handleApiError";
+import { GetMedicationSchedulesResponse } from "@/app/_types/schedule/schedule";
 
 export const GET = async (
   request: NextRequest,
@@ -56,7 +57,7 @@ export const GET = async (
         medicationScheduleTimes: { select: { time: true } },
       },
     });
-    return NextResponse.json(
+    return NextResponse.json<GetMedicationSchedulesResponse>(
       { message: "スケジュールを取得しました", schedules },
       { status: 200 },
     );
