@@ -44,13 +44,16 @@ export const GET = async (
     }
     const schedules = await prisma.medicationSchedule.findMany({
       where: { petId },
-      include: {
+      select: {
+        id: true,
+        dayType: true,
+        weekdays: true,
         medicationScheduleLinks: {
-          include: {
+          select: {
             medication: { select: { name: true, form: true, color: true } },
           },
         },
-        medicationScheduleTimes: true,
+        medicationScheduleTimes: { select: { time: true } },
       },
     });
     return NextResponse.json(
