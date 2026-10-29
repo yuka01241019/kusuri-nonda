@@ -32,6 +32,21 @@ export type GetMedicationSchedulesResponse = {
   schedules: MedicationScheduleWithDetails[];
 };
 
+// PUTの服薬スケジュール情報
+export type MedicationScheduleForEdit = {
+  id: number;
+  dayType: DayType;
+  weekdays: Weekday[];
+  medicationScheduleLinks: { medication: { id: number; name: string } }[];
+  medicationScheduleTimes: { time: string }[];
+};
+
+// 個別GETのレスポンス（1件の薬スケジュール）
+export type GetMedicationScheduleResponse = {
+  message: string;
+  schedule: MedicationScheduleForEdit;
+};
+
 // DELETEのレスポンス
 export type DeleteMedicationScheduleResponse = {
   message: string;
