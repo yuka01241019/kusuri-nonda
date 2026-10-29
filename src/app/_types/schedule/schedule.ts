@@ -31,3 +31,8 @@ export type GetMedicationSchedulesResponse = {
   message: string;
   schedules: MedicationScheduleWithDetails[];
 };
+
+// DELETEのレスポンス
+export type DeleteMedicationScheduleResponse = {
+  message: string;
+};
