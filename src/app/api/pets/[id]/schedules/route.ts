@@ -4,6 +4,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { handleApiError } from "@/utils/handleApiError";
 import { GetMedicationSchedulesResponse } from "@/app/_types/schedule/schedule";
 
+// 薬服用スケジュール一覧取得API
 export const GET = async (
   request: NextRequest,
   { params }: { params: { id: string } },
