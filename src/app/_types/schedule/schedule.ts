@@ -51,3 +51,8 @@ export type GetMedicationScheduleResponse = {
 export type DeleteMedicationScheduleResponse = {
   message: string;
 };
+
+// PUTのレスポンス
+export type PutMedicationScheduleResponse = {
+  message: string;
+};
