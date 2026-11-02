@@ -8,6 +8,14 @@ import { handleApiError } from "@/utils/handleApiError";
 import { supabase } from "@/utils/supabase";
 import { NextRequest, NextResponse } from "next/server";
 import { updateMedicationScheduleSchema } from "@/app/_schemas/schedule/scheduleSchema";
+import { DayType, Weekday } from "@prisma/client";
+
+export type UpdateMedicationScheduleRequest = {
+  medicationId: number;
+  dayType: DayType;
+  weekdays: Weekday[];
+  times: string[];
+};
 
 // 薬服用スケジュール個別削除API
 export const DELETE = async (
