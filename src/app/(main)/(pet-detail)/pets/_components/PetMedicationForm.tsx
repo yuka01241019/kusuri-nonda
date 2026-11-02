@@ -15,13 +15,18 @@ import { FormSelect } from "./FormSelect";
 import { createMedicationSchedule } from "../_lib/createMedicationSchedule";
 import toast from "react-hot-toast";
 import { useRouter } from "next/navigation";
+import { MedicationScheduleForEdit } from "@/app/_types/schedule/schedule";
+import { updateMedicationSchedule } from "../[id]/_lib/updateMedicationSchedule";
 
+// 登録・編集フォームで使用するスケジュール情報(編集時のみ既存のスケジュール情報を受け取る)
 type PetMedicationFormProps = {
   petId: number;
+  medicationSchedule?: MedicationScheduleForEdit;
 };
 
 export const PetMedicationForm: React.FC<PetMedicationFormProps> = ({
   petId,
+  medicationSchedule,
 }) => {
   const router = useRouter();
   const { data, isLoading } = useFetch<GetMedicationsResponse>(
@@ -41,24 +46,46 @@ export const PetMedicationForm: React.FC<PetMedicationFormProps> = ({
   } = useForm<PetMedicationFormData>({
     resolver: zodResolver(petMedicationFormSchema),
     defaultValues: {
-      medicationId: "",
-      dayType: undefined,
-      weekdays: [],
-      times: [],
+      medicationId: medicationSchedule?.medicationScheduleLinks[0]?.medication
+        .id
+        ? String(medicationSchedule.medicationScheduleLinks[0].medication.id)
+        : "",
+      dayType: medicationSchedule?.dayType ?? undefined,
+      weekdays: medicationSchedule?.weekdays ?? [],
+      times:
+        medicationSchedule?.medicationScheduleTimes.map(
+          (scheduleTime) => scheduleTime.time,
+        ) ?? [],
     },
   });
   const dayType = watch("dayType");
   const onSubmit = async (data: PetMedicationFormData) => {
-    const toastId = toast.loading("登録中です…");
+    const toastId = toast.loading(
+      medicationSchedule ? "更新中です…" : "登録中です…",
+    );
     try {
-      await createMedicationSchedule({
-        ...data,
-        petId,
-        // 文字列の薬IDを数値に変換して上書きする
-        medicationId: Number(data.medicationId),
-      });
-      toast.success("服薬スケジュールを登録しました！", { id: toastId });
-      router.push("/");
+      if (medicationSchedule) {
+        await updateMedicationSchedule(
+          String(petId),
+          String(medicationSchedule.id),
+          // 文字列の薬IDを数値に変換して上書きする
+          { ...data, medicationId: Number(data.medicationId) },
+        );
+      } else {
+        await createMedicationSchedule({
+          ...data,
+          petId,
+          // 文字列の薬IDを数値に変換して上書きする
+          medicationId: Number(data.medicationId),
+        });
+      }
+      toast.success(
+        medicationSchedule
+          ? "服薬スケジュールを更新しました！"
+          : "服薬スケジュールを登録しました！",
+        { id: toastId },
+      );
+      router.push(`/pets/${petId}`);
     } catch (error) {
       if (error instanceof Error) {
         toast.error(error.message, { id: toastId });
