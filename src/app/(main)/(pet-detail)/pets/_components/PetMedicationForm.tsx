@@ -17,6 +17,7 @@ import toast from "react-hot-toast";
 import { useRouter } from "next/navigation";
 import { MedicationScheduleForEdit } from "@/app/_types/schedule/schedule";
 import { updateMedicationSchedule } from "../[id]/_lib/updateMedicationSchedule";
+import { useEffect } from "react";
 
 // 登録・編集フォームで使用するスケジュール情報(編集時のみ既存のスケジュール情報を受け取る)
 type PetMedicationFormProps = {
@@ -58,6 +59,15 @@ export const PetMedicationForm: React.FC<PetMedicationFormProps> = ({
         ) ?? [],
     },
   });
+  // 薬の選択肢は非同期で取得するため、取得後に編集時の薬IDを再設定する
+  useEffect(() => {
+    if (medicationSchedule && data) {
+      setValue(
+        "medicationId",
+        String(medicationSchedule.medicationScheduleLinks[0].medication.id),
+      );
+    }
+  }, [medicationSchedule, data, setValue]);
   const dayType = watch("dayType");
   const onSubmit = async (data: PetMedicationFormData) => {
     const toastId = toast.loading(
