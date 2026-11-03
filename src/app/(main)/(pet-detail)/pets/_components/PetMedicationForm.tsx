@@ -110,7 +110,9 @@ export const PetMedicationForm: React.FC<PetMedicationFormProps> = ({
         <div className="w-full max-w-[350px] sm:max-w-[390px] md:max-w-[400px] lg:max-w-[420px] bg-white rounded-[16px] px-4 py-6 sm:px-6 sm:py-8 md:px-8 md:py-10 lg:px-8 lg:py-10">
           <div className="my-[10px]">
             <h1 className="text-heading1 text-center font-bold mb-[44px]">
-              薬スケジュールを追加
+              {medicationSchedule
+                ? "薬スケジュールを編集"
+                : "薬スケジュールを追加"}
             </h1>
             <form onSubmit={handleSubmit(onSubmit)}>
               <FormSelect
@@ -157,7 +159,10 @@ export const PetMedicationForm: React.FC<PetMedicationFormProps> = ({
                 error={errors.times?.message}
               />
               <div className="mt-[26px] flex justify-center">
-                <FormButton text="追加する" variant="secondary" />
+                <FormButton
+                  text={medicationSchedule ? "編集する" : "追加する"}
+                  variant="secondary"
+                />
               </div>
             </form>
           </div>
