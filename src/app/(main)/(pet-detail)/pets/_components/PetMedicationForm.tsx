@@ -18,6 +18,7 @@ import { useRouter } from "next/navigation";
 import { MedicationScheduleForEdit } from "@/app/_types/schedule/schedule";
 import { updateMedicationSchedule } from "../[id]/_lib/updateMedicationSchedule";
 import { useEffect } from "react";
+import { useSWRConfig } from "swr";
 
 // 登録・編集フォームで使用するスケジュール情報(編集時のみ既存のスケジュール情報を受け取る)
 type PetMedicationFormProps = {
@@ -33,6 +34,7 @@ export const PetMedicationForm: React.FC<PetMedicationFormProps> = ({
   const { data, isLoading } = useFetch<GetMedicationsResponse>(
     `/api/medications?all=true`,
   );
+  const { mutate } = useSWRConfig();
   // 薬一覧の取得が完了したか判定
   const isMedicationDataReady = !!data;
   // GETした薬のデータを子が受け取れる形に変換
@@ -98,6 +100,7 @@ export const PetMedicationForm: React.FC<PetMedicationFormProps> = ({
           String(medicationSchedule.id),
           requestData,
         );
+        await mutate(`/api/pets/${petId}/schedules/${medicationSchedule.id}`);
       } else {
         await createMedicationSchedule({
           ...requestData,
