@@ -50,6 +50,9 @@ export const PetMedicationScheduleItem: React.FC<
     SAT: "土曜日",
     SUN: "日曜日",
   };
+  const handleEdit = () => {
+    router.push(`/pets/${petId}/schedules/${medication.id}/edit`);
+  };
   return (
     <div
       className={`pb-5 pt-2 ${isLast ? "" : "border-b-[1.25px] border-gray-300"}`}
@@ -91,7 +94,10 @@ export const PetMedicationScheduleItem: React.FC<
               align="end"
               className="text-small text-textMain z-[70] w-[180px] space-y-2 rounded-[16px] bg-white p-6 shadow-lg"
             >
-              <DropdownMenu.Item className="mx-auto flex w-fit cursor-pointer items-center justify-center gap-1 rounded-lg bg-submitBtn px-6 py-2 text-white opacity-100 outline-none hover:opacity-80 transition-opacity">
+              <DropdownMenu.Item
+                onSelect={handleEdit}
+                className="mx-auto flex w-fit cursor-pointer items-center justify-center gap-1 rounded-lg bg-submitBtn px-6 py-2 text-white opacity-100 outline-none hover:opacity-80 transition-opacity"
+              >
                 <EditIcon className="w-5 h-5" />
                 編集
               </DropdownMenu.Item>
