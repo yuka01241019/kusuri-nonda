@@ -33,6 +33,8 @@ export const PetMedicationForm: React.FC<PetMedicationFormProps> = ({
   const { data, isLoading } = useFetch<GetMedicationsResponse>(
     `/api/medications?all=true`,
   );
+  // 薬一覧の取得が完了したか判定
+  const isMedicationDataReady = !!data;
   // GETした薬のデータを子が受け取れる形に変換
   const medicationOptions =
     data?.medications.map((medication) => {
@@ -44,6 +46,7 @@ export const PetMedicationForm: React.FC<PetMedicationFormProps> = ({
     formState: { errors, isSubmitting },
     watch,
     setValue,
+    reset,
   } = useForm<PetMedicationFormData>({
     resolver: zodResolver(petMedicationFormSchema),
     defaultValues: {
@@ -61,13 +64,20 @@ export const PetMedicationForm: React.FC<PetMedicationFormProps> = ({
   });
   // 薬の選択肢は非同期で取得するため、取得後に編集時の薬IDを再設定する
   useEffect(() => {
-    if (medicationSchedule && data) {
-      setValue(
-        "medicationId",
-        String(medicationSchedule.medicationScheduleLinks[0].medication.id),
-      );
+    if (medicationSchedule && isMedicationDataReady) {
+      reset({
+        medicationId: String(
+          medicationSchedule.medicationScheduleLinks[0].medication.id,
+        ),
+        dayType: medicationSchedule?.dayType ?? undefined,
+        weekdays: medicationSchedule?.weekdays ?? [],
+        times:
+          medicationSchedule?.medicationScheduleTimes.map(
+            (scheduleTime) => scheduleTime.time,
+          ) ?? [],
+      });
     }
-  }, [medicationSchedule, data, setValue]);
+  }, [medicationSchedule, isMedicationDataReady, reset]);
   const dayType = watch("dayType");
   const onSubmit = async (data: PetMedicationFormData) => {
     const toastId = toast.loading(
