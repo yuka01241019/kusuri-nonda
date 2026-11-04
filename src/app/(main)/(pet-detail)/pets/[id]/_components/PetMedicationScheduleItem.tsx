@@ -14,21 +14,21 @@ import toast from "react-hot-toast";
 
 type PetMedicationScheduleItemProps = {
   petId: number;
-  medication: MedicationScheduleWithDetails;
+  schedule: MedicationScheduleWithDetails;
   isLast: boolean;
   onDelete: () => void;
 };
 
 export const PetMedicationScheduleItem: React.FC<
   PetMedicationScheduleItemProps
-> = ({ petId, medication, isLast, onDelete }) => {
+> = ({ petId, schedule, isLast, onDelete }) => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
   const router = useRouter();
   const handleDelete = async () => {
     const toastId = toast.loading("削除中です…");
     try {
-      await deleteMedicationSchedule(petId, medication.id);
+      await deleteMedicationSchedule(petId, schedule.id);
       onDelete();
       toast.success("スケジュールを削除しました！", { id: toastId });
     } catch (error) {
@@ -40,7 +40,7 @@ export const PetMedicationScheduleItem: React.FC<
     }
   };
   // 繰り返し使うため変数に格納
-  const medicine = medication.medicationScheduleLinks[0].medication;
+  const medicine = schedule.medicationScheduleLinks[0].medication;
   const weekdayMap: Record<Weekday, string> = {
     MON: "月曜日",
     TUE: "火曜日",
@@ -51,7 +51,7 @@ export const PetMedicationScheduleItem: React.FC<
     SUN: "日曜日",
   };
   const handleEdit = () => {
-    router.push(`/pets/${petId}/schedules/${medication.id}/edit`);
+    router.push(`/pets/${petId}/schedules/${schedule.id}/edit`);
   };
   return (
     <div
@@ -60,14 +60,14 @@ export const PetMedicationScheduleItem: React.FC<
       <div className="flex items-center gap-2">
         <MedicationIcon form={medicine.form} color={medicine.color} />
         {medicine.name}
-        {medication.dayType === "DAILY"
+        {schedule.dayType === "DAILY"
           ? "毎日"
-          : medication.weekdays
+          : schedule.weekdays
               .map((weekday) => {
                 return weekdayMap[weekday];
               })
               .join("/")}
-        {medication.medicationScheduleTimes
+        {schedule.medicationScheduleTimes
           .map((item) => {
             return item.time;
           })

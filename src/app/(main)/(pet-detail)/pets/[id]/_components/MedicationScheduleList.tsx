@@ -29,7 +29,7 @@ export const MedicationScheduleList: React.FC<MedicationScheduleListProps> = ({
                   <PetMedicationScheduleItem
                     key={schedule.id}
                     petId={Number(id)}
-                    medication={schedule}
+                    schedule={schedule}
                     isLast={index === schedulesData.schedules.length - 1}
                     onDelete={mutate}
                   />
