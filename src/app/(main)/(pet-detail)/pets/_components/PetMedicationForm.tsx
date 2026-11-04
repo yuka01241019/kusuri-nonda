@@ -74,19 +74,24 @@ export const PetMedicationForm: React.FC<PetMedicationFormProps> = ({
       medicationSchedule ? "更新中です…" : "登録中です…",
     );
     try {
+      // POST・PUTで共通して使用するリクエストデータを作成
+      const requestData = {
+        // 文字列の薬IDを数値に変換して上書きする
+        ...data,
+        medicationId: Number(data.medicationId),
+        // 毎日服薬する場合は曜日指定を空にする
+        weekdays: data.dayType === "DAILY" ? [] : data.weekdays,
+      };
       if (medicationSchedule) {
         await updateMedicationSchedule(
           String(petId),
           String(medicationSchedule.id),
-          // 文字列の薬IDを数値に変換して上書きする
-          { ...data, medicationId: Number(data.medicationId) },
+          requestData,
         );
       } else {
         await createMedicationSchedule({
-          ...data,
+          ...requestData,
           petId,
-          // 文字列の薬IDを数値に変換して上書きする
-          medicationId: Number(data.medicationId),
         });
       }
       toast.success(
