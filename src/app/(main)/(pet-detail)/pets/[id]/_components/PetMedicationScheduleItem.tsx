@@ -5,7 +5,7 @@ import { MedicationIcon } from "@/app/_components/MedicationIcon";
 import ChevronRightIcon from "@assets/icons/chevron-right.svg";
 import { Weekday } from "@prisma/client";
 import { useState } from "react";
-import { DropdownMenu, AlertDialog } from "radix-ui";
+import { DropdownMenu, AlertDialog, Popover } from "radix-ui";
 import { useRouter } from "next/navigation";
 import EditIcon from "@assets/icons/edit.svg";
 import TrashIcon from "@assets/icons/trash.svg";
@@ -58,20 +58,53 @@ export const PetMedicationScheduleItem: React.FC<
       className={`pb-5 pt-2 ${isLast ? "" : "border-b-[1.25px] border-gray-300"}`}
     >
       <div className="flex items-center gap-2">
-        <MedicationIcon form={medicine.form} color={medicine.color} />
-        {medicine.name}
-        {schedule.dayType === "DAILY"
-          ? "毎日"
-          : schedule.weekdays
-              .map((weekday) => {
-                return weekdayMap[weekday];
-              })
-              .join("/")}
-        {schedule.medicationScheduleTimes
-          .map((item) => {
-            return item.time;
-          })
-          .join("/")}
+        <div className="flex min-w-0 flex-1 items-center gap-2">
+          <div className="shrink-0">
+            <MedicationIcon form={medicine.form} color={medicine.color} />
+          </div>
+          <div className="flex flex-col">
+            <span>{medicine.name}</span>
+            <span className="text-xs text-gray-500">
+              {schedule.dayType === "DAILY"
+                ? "毎日"
+                : schedule.weekdays
+                    .map((weekday) => {
+                      return weekdayMap[weekday];
+                    })
+                    .join(" / ")}
+            </span>
+          </div>
+        </div>
+        <div className="w-[120px] shrink-0">
+          <Popover.Root>
+            <Popover.Trigger asChild>
+              <button
+                type="button"
+                className="w-[120px] min-w-0 shrink-0 truncate text-left text-xs text-gray-600"
+                aria-label="服薬時間をすべて表示"
+              >
+                {schedule.medicationScheduleTimes
+                  .map((item) => item.time)
+                  .join(" / ")}
+              </button>
+            </Popover.Trigger>
+
+            <Popover.Portal>
+              <Popover.Content
+                sideOffset={5}
+                align="center"
+                className="z-[80] max-w-[260px] rounded-lg bg-white p-4 text-xs text-textMain shadow-lg"
+              >
+                <p className="mb-2 font-bold">服薬時間</p>
+                <p className="break-words">
+                  {schedule.medicationScheduleTimes
+                    .map((item) => item.time)
+                    .join(" / ")}
+                </p>
+              </Popover.Content>
+            </Popover.Portal>
+          </Popover.Root>
+        </div>
         <DropdownMenu.Root
           modal={false}
           open={isMenuOpen}
