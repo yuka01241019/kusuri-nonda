@@ -47,7 +47,7 @@ export const PetMedicationScheduleList: React.FC<
     return <p>薬スケジュール情報を取得できませんでした。</p>;
   }
   return (
-    <div>
+    <div className="flex flex-1 flex-col bg-lightPink">
       <PetInfo
         name={petData.pet.name}
         gender={petData.pet.gender}

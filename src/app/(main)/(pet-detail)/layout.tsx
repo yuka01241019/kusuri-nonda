@@ -6,7 +6,7 @@ export default function PetDetailLayout({
   return (
     <div className="flex flex-1 flex-col">
       <PetSwitcherHeader />
-      <main className="flex-1">{children}</main>
+      <main className="flex flex-1 flex-col">{children}</main>
     </div>
   );
 }
