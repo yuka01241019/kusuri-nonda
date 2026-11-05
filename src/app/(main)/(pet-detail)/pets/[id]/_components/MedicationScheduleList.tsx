@@ -3,6 +3,9 @@
 import { GetMedicationSchedulesResponse } from "@/app/_types/schedule/schedule";
 import { PetMedicationScheduleItem } from "./PetMedicationScheduleItem";
 import type { KeyedMutator } from "swr";
+import { EmptyState } from "@/app/_components/EmptyState";
+
+import EmptyScheduleIcon from "@assets/emptyState/emptySchedule.svg";
 
 type MedicationScheduleListProps = {
   id: string;
@@ -16,7 +19,15 @@ export const MedicationScheduleList: React.FC<MedicationScheduleListProps> = ({
   mutate,
 }) => {
   if (schedulesData.schedules.length === 0) {
-    return <p>登録されている薬スケジュールはありません。</p>;
+    return (
+      <EmptyState
+      icon={<EmptyScheduleIcon/>}
+        title="薬スケジュールがまだ登録されていません"
+        description="お薬を飲む時間や曜日を登録しましょう！"
+        buttonText="スケジュールを登録"
+        href={`/pets/${id}/medications/new`}
+      />
+    );
   }
   return (
     <div className="text-small">
