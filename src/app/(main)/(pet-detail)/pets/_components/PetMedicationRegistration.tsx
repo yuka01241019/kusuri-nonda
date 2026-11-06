@@ -12,7 +12,7 @@ const PetMedicationRegistration: React.FC<PetMedicationPageProps> = ({
   id,
 }) => {
   return (
-    <div>
+    <div className="flex flex-1 flex-col bg-lightPink">
       <PetInfo id={id} />
       <PetMedicationForm petId={Number(id)} />
     </div>

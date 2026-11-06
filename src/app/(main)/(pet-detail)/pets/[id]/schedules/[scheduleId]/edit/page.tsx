@@ -15,12 +15,7 @@ const PetMedicationScheduleEditPage = ({
 }: PetMedicationScheduleEditPageProps) => {
   useRouteGuard();
   return (
-    <div>
-      <PetMedicationScheduleEdit
-        id={params.id}
-        scheduleId={params.scheduleId}
-      />
-    </div>
+    <PetMedicationScheduleEdit id={params.id} scheduleId={params.scheduleId} />
   );
 };
 

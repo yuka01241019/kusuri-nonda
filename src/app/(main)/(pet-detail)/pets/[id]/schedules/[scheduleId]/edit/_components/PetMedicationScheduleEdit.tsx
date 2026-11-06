@@ -20,7 +20,7 @@ export const PetMedicationScheduleEdit = ({
   );
   if (isLoading) {
     return (
-      <div className="pt-10">
+      <div className="flex flex-1 flex-col bg-lightPink pt-10">
         <LoadingSpinner />
       </div>
     );
@@ -32,7 +32,7 @@ export const PetMedicationScheduleEdit = ({
     return <p>スケジュールが見つかりません。</p>;
   }
   return (
-    <div>
+    <div className="flex flex-1 flex-col bg-lightPink">
       <PetInfo id={id} />
       <PetMedicationForm
         petId={Number(id)}
