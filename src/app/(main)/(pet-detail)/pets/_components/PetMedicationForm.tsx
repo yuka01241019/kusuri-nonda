@@ -15,18 +15,28 @@ import { FormSelect } from "./FormSelect";
 import { createMedicationSchedule } from "../_lib/createMedicationSchedule";
 import toast from "react-hot-toast";
 import { useRouter } from "next/navigation";
+import { MedicationScheduleForEdit } from "@/app/_types/schedule/schedule";
+import { updateMedicationSchedule } from "../[id]/_lib/updateMedicationSchedule";
+import { useEffect } from "react";
+import { useSWRConfig } from "swr";
 
+// 登録・編集フォームで使用するスケジュール情報(編集時のみ既存のスケジュール情報を受け取る)
 type PetMedicationFormProps = {
   petId: number;
+  medicationSchedule?: MedicationScheduleForEdit;
 };
 
 export const PetMedicationForm: React.FC<PetMedicationFormProps> = ({
   petId,
+  medicationSchedule,
 }) => {
   const router = useRouter();
   const { data, isLoading } = useFetch<GetMedicationsResponse>(
     `/api/medications?all=true`,
   );
+  const { mutate } = useSWRConfig();
+  // 薬一覧の取得が完了したか判定
+  const isMedicationDataReady = !!data;
   // GETした薬のデータを子が受け取れる形に変換
   const medicationOptions =
     data?.medications.map((medication) => {
@@ -38,27 +48,72 @@ export const PetMedicationForm: React.FC<PetMedicationFormProps> = ({
     formState: { errors, isSubmitting },
     watch,
     setValue,
+    reset,
   } = useForm<PetMedicationFormData>({
     resolver: zodResolver(petMedicationFormSchema),
     defaultValues: {
-      medicationId: "",
-      dayType: undefined,
-      weekdays: [],
-      times: [],
+      medicationId: medicationSchedule?.medicationScheduleLinks[0]?.medication
+        .id
+        ? String(medicationSchedule.medicationScheduleLinks[0].medication.id)
+        : "",
+      dayType: medicationSchedule?.dayType ?? undefined,
+      weekdays: medicationSchedule?.weekdays ?? [],
+      times:
+        medicationSchedule?.medicationScheduleTimes.map(
+          (scheduleTime) => scheduleTime.time,
+        ) ?? [],
     },
   });
+  // 薬の選択肢は非同期で取得するため、取得後に編集時の薬IDを再設定する
+  useEffect(() => {
+    if (medicationSchedule && isMedicationDataReady) {
+      reset({
+        medicationId: String(
+          medicationSchedule.medicationScheduleLinks[0].medication.id,
+        ),
+        dayType: medicationSchedule?.dayType ?? undefined,
+        weekdays: medicationSchedule?.weekdays ?? [],
+        times:
+          medicationSchedule?.medicationScheduleTimes.map(
+            (scheduleTime) => scheduleTime.time,
+          ) ?? [],
+      });
+    }
+  }, [medicationSchedule, isMedicationDataReady, reset]);
   const dayType = watch("dayType");
   const onSubmit = async (data: PetMedicationFormData) => {
-    const toastId = toast.loading("登録中です…");
+    const toastId = toast.loading(
+      medicationSchedule ? "更新中です…" : "登録中です…",
+    );
     try {
-      await createMedicationSchedule({
-        ...data,
-        petId,
+      // POST・PUTで共通して使用するリクエストデータを作成
+      const requestData = {
         // 文字列の薬IDを数値に変換して上書きする
+        ...data,
         medicationId: Number(data.medicationId),
-      });
-      toast.success("服薬スケジュールを登録しました！", { id: toastId });
-      router.push("/");
+        // 毎日服薬する場合は曜日指定を空にする
+        weekdays: data.dayType === "DAILY" ? [] : data.weekdays,
+      };
+      if (medicationSchedule) {
+        await updateMedicationSchedule(
+          String(petId),
+          String(medicationSchedule.id),
+          requestData,
+        );
+        await mutate(`/api/pets/${petId}/schedules/${medicationSchedule.id}`);
+      } else {
+        await createMedicationSchedule({
+          ...requestData,
+          petId,
+        });
+      }
+      toast.success(
+        medicationSchedule
+          ? "服薬スケジュールを更新しました！"
+          : "服薬スケジュールを登録しました！",
+        { id: toastId },
+      );
+      router.push(`/pets/${petId}`);
     } catch (error) {
       if (error instanceof Error) {
         toast.error(error.message, { id: toastId });
@@ -73,7 +128,9 @@ export const PetMedicationForm: React.FC<PetMedicationFormProps> = ({
         <div className="w-full max-w-[350px] sm:max-w-[390px] md:max-w-[400px] lg:max-w-[420px] bg-white rounded-[16px] px-4 py-6 sm:px-6 sm:py-8 md:px-8 md:py-10 lg:px-8 lg:py-10">
           <div className="my-[10px]">
             <h1 className="text-heading1 text-center font-bold mb-[44px]">
-              薬スケジュールを追加
+              {medicationSchedule
+                ? "薬スケジュールを編集"
+                : "薬スケジュールを追加"}
             </h1>
             <form onSubmit={handleSubmit(onSubmit)}>
               <FormSelect
@@ -120,7 +177,10 @@ export const PetMedicationForm: React.FC<PetMedicationFormProps> = ({
                 error={errors.times?.message}
               />
               <div className="mt-[26px] flex justify-center">
-                <FormButton text="追加する" variant="secondary" />
+                <FormButton
+                  text={medicationSchedule ? "編集する" : "追加する"}
+                  variant="secondary"
+                />
               </div>
             </form>
           </div>

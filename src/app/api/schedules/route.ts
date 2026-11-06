@@ -4,7 +4,7 @@ import { handleApiError } from "@/utils/handleApiError";
 import { supabase } from "@/utils/supabase";
 import { DayType, Weekday } from "@prisma/client";
 import { PostMedicationScheduleResponse } from "@/app/_types/schedule/schedule";
-import { createMedicationScheduleSchema } from "./scheduleSchema";
+import { createMedicationScheduleSchema } from "../../_schemas/schedule/scheduleSchema";
 
 export type CreateMedicationScheduleRequest = {
   petId: number;

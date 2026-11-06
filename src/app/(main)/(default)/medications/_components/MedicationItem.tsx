@@ -1,22 +1,8 @@
 "use client";
 
 import { Medication } from "@/app/_types/medication/medication";
-//TABLET
-import GrayTabletIcon from "@assets/icons/medication/color/tablet/gray.svg";
-import OrangeTabletIcon from "@assets/icons/medication/color/tablet/orange.svg";
-import RedTabletIcon from "@assets/icons/medication/color/tablet/red.svg";
-import WhiteTabletIcon from "@assets/icons/medication/color/tablet/white.svg";
-import YellowTabletIcon from "@assets/icons/medication/color/tablet/yellow.svg";
-//ROUNDTABLET
-import GrayRoundTabletIcon from "@assets/icons/medication/color/RoundTablet/gray.svg";
-import OrangeRoundTabletIcon from "@assets/icons/medication/color/RoundTablet/orange.svg";
-import RedRoundTabletIcon from "@assets/icons/medication/color/RoundTablet/red.svg";
-import WhiteRoundTabletIcon from "@assets/icons/medication/color/RoundTablet/white.svg";
-import YellowRoundTabletIcon from "@assets/icons/medication/color/RoundTablet/yellow.svg";
-import PowderIcon from "@assets/icons/medication/form/powder.svg";
-import EyedropIcon from "@assets/icons/medication/form/eyedrop.svg";
+import { MedicationIcon } from "@/app/_components/MedicationIcon";
 import ChevronRightIcon from "@assets/icons/chevron-right.svg";
-import { Color } from "@prisma/client";
 import { useState } from "react";
 import { DropdownMenu, AlertDialog } from "radix-ui";
 import EditIcon from "@assets/icons/edit.svg";
@@ -36,39 +22,6 @@ export const MedicationItem: React.FC<MedicationItemProps> = ({
   isLast,
   onDelete,
 }) => {
-  const tabletIconMap: Record<
-    Color,
-    React.FC<React.SVGProps<SVGSVGElement>>
-  > = {
-    [Color.WHITE]: WhiteTabletIcon,
-    [Color.RED]: RedTabletIcon,
-    [Color.YELLOW]: YellowTabletIcon,
-    [Color.GRAY]: GrayTabletIcon,
-    [Color.ORANGE]: OrangeTabletIcon,
-  };
-  const roundTabletIconMap: Record<
-    Color,
-    React.FC<React.SVGProps<SVGSVGElement>>
-  > = {
-    [Color.WHITE]: WhiteRoundTabletIcon,
-    [Color.RED]: RedRoundTabletIcon,
-    [Color.YELLOW]: YellowRoundTabletIcon,
-    [Color.GRAY]: GrayRoundTabletIcon,
-    [Color.ORANGE]: OrangeRoundTabletIcon,
-  };
-
-  let icon = null;
-  if (medication.form === "POWDER") {
-    icon = <PowderIcon className="w-5 h-5" />;
-  } else if (medication.form === "EYEDROP") {
-    icon = <EyedropIcon className="w-5 h-5" />;
-  } else if (medication.form === "TABLET" && medication.color !== null) {
-    const Icon = tabletIconMap[medication.color];
-    icon = <Icon className="w-5 h-5" />;
-  } else if (medication.form === "ROUNDTABLET" && medication.color !== null) {
-    const Icon = roundTabletIconMap[medication.color];
-    icon = <Icon className="w-5 h-5" />;
-  }
   // ドロップダウンメニューの開閉状態を管理
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   // 削除確認ダイアログの開閉状態を管理
@@ -98,9 +51,13 @@ export const MedicationItem: React.FC<MedicationItemProps> = ({
       className={`pb-5 pt-2 ${isLast ? "" : "border-b-[1.25px] border-gray-300 "}`}
     >
       <div className="flex items-center gap-2">
-        {icon}
+        <MedicationIcon form={medication.form} color={medication.color} />
         {medication.name}
-        <DropdownMenu.Root modal={false} open={isMenuOpen} onOpenChange={setIsMenuOpen}>
+        <DropdownMenu.Root
+          modal={false}
+          open={isMenuOpen}
+          onOpenChange={setIsMenuOpen}
+        >
           {isMenuOpen && (
             <div className="fixed inset-0 z-[60] bg-black/20"></div>
           )}

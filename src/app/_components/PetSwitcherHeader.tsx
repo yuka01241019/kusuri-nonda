@@ -24,7 +24,14 @@ export const PetSwitcherHeader: React.FC = () => {
       <div className="flex px-4 gap-3">
         {otherPets.map((pet) => {
           return (
-            <Link href={`/pets/${pet.id}/medications/new`} key={pet.id}>
+            <Link
+              href={
+                isMedicationPage
+                  ? `/pets/${pet.id}/medications/new`
+                  : `/pets/${pet.id}`
+              }
+              key={pet.id}
+            >
               <PetSwitcherIcon
                 id={pet.id}
                 name={pet.name}
@@ -36,7 +43,7 @@ export const PetSwitcherHeader: React.FC = () => {
       </div>
       {isMedicationPage ? (
         <Link href="/family" className="absolute right-4 top-2 p-2">
-          <HeaderFamily/>
+          <HeaderFamily />
         </Link>
       ) : (
         <Link
