@@ -25,3 +25,9 @@ export type GetPetResponse = {
   message: string;
   pet: Pet;
 };
+
+// PUTのレスポンス
+export type PutPetResponse = {
+  message: string;
+  pet: Pet;
+};
