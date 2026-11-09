@@ -2,17 +2,16 @@
 
 import { supabase } from "@/utils/supabase";
 import { useState, useEffect, useRef } from "react";
-import { v4 as uuidv4 } from "uuid";
 import Image from "next/image";
-import toast from "react-hot-toast";
 import CameraIcon from "@assets/icons/pet/camera.svg";
-import { useSupabaseSession } from "@/app/_hooks/useSupabaseSession";
 
 type PetImageUploadProps = {
   imagePath: string | null | undefined;
-  onChange: (value: string) => void;
+  // 選択した画像ファイル、または画像削除時のnullを親に渡す
+  onChange: (value: File | null) => void;
   error?: string;
   disabled?: boolean;
+  selectedFile: File | null;
 };
 
 export const PetImageUpload: React.FC<PetImageUploadProps> = ({
@@ -20,11 +19,13 @@ export const PetImageUpload: React.FC<PetImageUploadProps> = ({
   onChange,
   error,
   disabled,
+  selectedFile,
 }) => {
-  const { session } = useSupabaseSession();
   const fileInputRef = useRef<HTMLInputElement | null>(null);
-  const [uploading, setUploading] = useState(false);
+  // ストレージから取得した登録済みの画像
   const [imageUrl, setImageUrl] = useState<string | null>(null);
+  // 新しく選択した画像の一時URL
+  const [previewUrl, setPreviewUrl] = useState<string | null>(null);
   //初期表示 or imagePathが変わった時にURLを再取得
   useEffect(() => {
     if (!imagePath) {
@@ -59,43 +60,35 @@ export const PetImageUpload: React.FC<PetImageUploadProps> = ({
       }
     };
   }, [imagePath]);
+
+  // プレビュー用
+  useEffect(() => {
+    if (!selectedFile) {
+      setPreviewUrl(null);
+      return;
+    }
+    // 選択した画像ファイルから一時URLを作成し、解放処理でも使えるよう変数に保存する
+    const objectUrl = URL.createObjectURL(selectedFile);
+    // 作成した一時URLをstateに保存して、プレビュー表示に使う
+    setPreviewUrl(objectUrl);
+    return () => {
+      URL.revokeObjectURL(objectUrl);
+    };
+  }, [selectedFile]);
   const handleClick = () => {
     if (!disabled) {
       fileInputRef.current?.click();
     }
   };
-  const handleImageChange = async (
-    event: React.ChangeEvent<HTMLInputElement>,
-  ) => {
+  const handleImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const files = event.target.files;
     if (!files || files.length === 0) return;
     const file = files[0];
-    // userIDを取得
-    const userId = session?.user.id;
-    // userIdが存在しない場合はreturn
-    if (!userId) {
-      return;
-    }
-    // あればfilePathを作成して次の処理へ進む
-    const filePath = `${userId}/${uuidv4()}`;
-    const toastId = toast.loading("画像をアップロード中…");
-    setUploading(true);
-
-    const { error: uploadError } = await supabase.storage
-      .from("pet-imageurl")
-      .upload(filePath, file);
-    setUploading(false);
-
-    if (uploadError) {
-      toast.error("画像のアップロードに失敗しました", { id: toastId });
-      console.error(uploadError);
-      return;
-    }
-    // アップロード成功 → 親に画像の保存先を渡す
-    onChange(filePath); //imagePathを親に返す
-    // 成功メッセージを表示
-    toast.success("画像をアップロードしました！", { id: toastId });
+    onChange(file); //親コンポーネントに画像ファイルを渡す
   };
+  // Imageのsrcはnullを受け取れないため、表示用URLをまとめて管理する
+  const displayUrl = previewUrl || imageUrl;
+
   return (
     <div className="w-full flex flex-col items-center">
       <div className="relative w-[110px] h-[110px] mb-2">
@@ -103,9 +96,9 @@ export const PetImageUpload: React.FC<PetImageUploadProps> = ({
           className="w-full h-full rounded-full bg-[#E0E0E0] overflow-hidden border border-gray-500 cursor-pointer relative"
           onClick={handleClick}
         >
-          {imageUrl && (
+          {displayUrl && (
             <Image
-              src={imageUrl}
+              src={displayUrl}
               alt="pet image"
               fill
               unoptimized

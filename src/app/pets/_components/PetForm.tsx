@@ -12,8 +12,15 @@ import { useRouter } from "next/navigation";
 import toast from "react-hot-toast";
 import { PetImageUpload } from "./PetImageUpload";
 import PowIcon from "@assets/icons/auth/pow.svg";
+import { useState } from "react";
+import { useSupabaseSession } from "@/app/_hooks/useSupabaseSession";
+import { v4 as uuidv4 } from "uuid";
+import { supabase } from "@/utils/supabase";
 
 export const PetForm: React.FC = () => {
+  // 画像ファイルを管理
+  const [selectedFile, setSelectedFile] = useState<File | null>(null);
+  const { session } = useSupabaseSession();
   const { createPet } = useCreatePet();
   const router = useRouter();
   const {
@@ -30,19 +37,56 @@ export const PetForm: React.FC = () => {
       gender: null,
       birthday: null,
       adoptedAt: null,
-      imagePath: "",
+      imagePath: null,
     },
   });
   const onSubmit = async (data: PetFormData) => {
     const toastId = toast.loading("登録中です…");
+    // 最初は画像パスなし
+    let imagePath: string | null = null;
+    let isPetCreated = false;
     try {
+      // 画像が選択されている場合だけアップロード処理
+      if (selectedFile) {
+        // userIDを取得
+        const userId = session?.user.id;
+        // userIdが存在しない場合はエラーを発生させる
+        if (!userId) {
+          throw new Error("ログイン情報を取得できませんでした");
+        }
+        // あればfilePathを作成して次の処理へ進む
+        const filePath = `${userId}/${uuidv4()}`;
+        const { error: uploadError } = await supabase.storage
+          .from("pet-imageurl")
+          .upload(filePath, selectedFile);
+        if (uploadError) {
+          console.error(uploadError);
+          throw new Error("画像のアップロードに失敗しました");
+        }
+        imagePath = filePath;
+      }
       await createPet({
         ...data,
         gender: data.gender === "" ? null : data.gender,
+        imagePath: imagePath,
       });
+      isPetCreated = true;
       toast.success("ペットを登録しました！", { id: toastId });
       router.push("/dashboard");
     } catch (error) {
+      // 画像パスが存在していて、かつペット登録が成功していない場合Storageから削除する
+      if (imagePath && !isPetCreated) {
+        try {
+          const { error: removeError } = await supabase.storage
+            .from("pet-imageurl")
+            .remove([imagePath]);
+          if (removeError) {
+            console.error("画像の削除に失敗しました:", removeError);
+          }
+        } catch (removeError) {
+          console.error("画像の削除中に例外が発生しました:", removeError);
+        }
+      }
       if (error instanceof Error) {
         toast.error(error.message, { id: toastId });
       } else {
@@ -63,12 +107,12 @@ export const PetForm: React.FC = () => {
               <div className="w-full max-w-[390px]">
                 <PetImageUpload
                   imagePath={watch("imagePath")}
-                  onChange={(key) => setValue("imagePath", key)}
+                  onChange={(file) => setSelectedFile(file)}
                   error={errors.imagePath?.message}
                   disabled={isSubmitting}
+                  selectedFile={selectedFile}
                 />
                 <input type="hidden" {...register("imagePath")} />
-
                 <FormInput
                   id="name"
                   label="名前"
