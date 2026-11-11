@@ -7,7 +7,8 @@ import { FormInput } from "@/app/_components/FormInput";
 import { FormButton } from "@/app/_components/FormButton";
 import { PetFormSelect } from "../_components/PetFormSelect";
 import { PetFormDateInput } from "./PetFormDateInput";
-import { useCreatePet } from "../_hooks/useCreatePet";
+import { createPet } from "../_lib/createPet";
+import { updatePet } from "../_lib/updatePet";
 import { useRouter } from "next/navigation";
 import toast from "react-hot-toast";
 import { PetImageUpload } from "./PetImageUpload";
@@ -16,13 +17,20 @@ import { useState } from "react";
 import { useSupabaseSession } from "@/app/_hooks/useSupabaseSession";
 import { v4 as uuidv4 } from "uuid";
 import { supabase } from "@/utils/supabase";
+import { Pet } from "@/app/_types/pet/pet";
 
-export const PetForm: React.FC = () => {
+// 編集時にペット情報を渡す
+type PetFormProps = { mode: "create" } | { mode: "edit"; pet: Pet };
+
+export const PetForm: React.FC<PetFormProps> = (props) => {
   // 画像ファイルを管理
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const { session } = useSupabaseSession();
-  const { createPet } = useCreatePet();
   const router = useRouter();
+  // modeによる出し分け
+  const isEdit = props.mode === "edit";
+  const title = isEdit ? "ペットを編集" : "ペットを登録";
+  const buttonText = isEdit ? "変更を保存する" : "登録する";
   const {
     register,
     handleSubmit,
@@ -32,19 +40,26 @@ export const PetForm: React.FC = () => {
   } = useForm<PetFormData>({
     resolver: zodResolver(petFormSchema),
     defaultValues: {
-      name: "",
-      species: "",
-      gender: null,
-      birthday: null,
-      adoptedAt: null,
-      imagePath: null,
+      name: isEdit ? props.pet.name : "",
+      species: isEdit ? props.pet.species : "",
+      gender:
+        isEdit &&
+        (props.pet.gender === "おとこのこ♂" ||
+          props.pet.gender === "おんなのこ♀")
+          ? props.pet.gender
+          : null,
+      birthday: isEdit ? props.pet.birthday : null,
+      adoptedAt: isEdit ? props.pet.adoptedAt : null,
+      imagePath: isEdit ? props.pet.imagePath : null,
     },
   });
   const onSubmit = async (data: PetFormData) => {
-    const toastId = toast.loading("登録中です…");
-    // 最初は画像パスなし
-    let imagePath: string | null = null;
-    let isPetCreated = false;
+    const toastId = toast.loading(isEdit ? "保存中です…" : "登録中です…");
+    // 登録時と編集時の両方に対応
+    let imagePath: string | null = isEdit ? props.pet.imagePath : null;
+    let isPetSaved = false;
+    // 新しくアップロードした画像のパス（登録・編集失敗時の削除用）
+    let uploadedImagePath: string | null = null;
     try {
       // 画像が選択されている場合だけアップロード処理
       if (selectedFile) {
@@ -63,23 +78,35 @@ export const PetForm: React.FC = () => {
           console.error(uploadError);
           throw new Error("画像のアップロードに失敗しました");
         }
+        // DB保存用と失敗時の削除用に、新しい画像パスを保持する
         imagePath = filePath;
+        uploadedImagePath = filePath;
       }
-      await createPet({
+      // POST・PUTで共通して使用するリクエストデータを作成
+      const requestData = {
         ...data,
+        // 性別が空文字 "" なら null に変換する。それ以外なら、選択した性別をそのまま使う
         gender: data.gender === "" ? null : data.gender,
-        imagePath: imagePath,
-      });
-      isPetCreated = true;
-      toast.success("ペットを登録しました！", { id: toastId });
-      router.push("/dashboard");
+        imagePath,
+      };
+      if (isEdit) {
+        await updatePet(props.pet.id, requestData);
+      } else {
+        await createPet(requestData);
+      }
+      isPetSaved = true;
+      toast.success(
+        isEdit ? "ペットを編集しました！" : "ペットを登録しました",
+        { id: toastId },
+      );
+      router.push(isEdit ? `/pets/${props.pet.id}` : "/dashboard");
     } catch (error) {
-      // 画像パスが存在していて、かつペット登録が成功していない場合Storageから削除する
-      if (imagePath && !isPetCreated) {
+      // 保存に失敗した場合、新しくアップロードした画像だけをStorageから削除する
+      if (uploadedImagePath && !isPetSaved) {
         try {
           const { error: removeError } = await supabase.storage
             .from("pet-imageurl")
-            .remove([imagePath]);
+            .remove([uploadedImagePath]);
           if (removeError) {
             console.error("画像の削除に失敗しました:", removeError);
           }
@@ -101,7 +128,7 @@ export const PetForm: React.FC = () => {
         <div className="w-full max-w-[380px] sm:max-w-[420px] md:max-w-[430px] lg:max-w-[450px] bg-white rounded-[16px] px-4 py-6 sm:px-6 sm:py-8 md:px-8 md:py-10 lg:px-8 lg:py-10">
           <div className="my-[10px]">
             <h1 className="text-heading1 text-center font-bold mb-[44px]">
-              ペットを登録
+              {title}
             </h1>
             <form onSubmit={handleSubmit(onSubmit)}>
               <div className="w-full max-w-[390px]">
@@ -152,7 +179,7 @@ export const PetForm: React.FC = () => {
               </div>
               <div className="mt-[26px] flex justify-center">
                 <FormButton
-                  text="登録する"
+                  text={buttonText}
                   variant="primary"
                   icon={<PowIcon />}
                   showIcon={true}
