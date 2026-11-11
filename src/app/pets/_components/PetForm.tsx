@@ -91,10 +91,24 @@ export const PetForm: React.FC<PetFormProps> = (props) => {
       };
       if (isEdit) {
         await updatePet(props.pet.id, requestData);
+        isPetSaved = true;
+        try {
+          if (selectedFile && props.pet.imagePath) {
+            const { error: removeError } = await supabase.storage
+              .from("pet-imageurl")
+              // removeは削除したいファイルのパスは配列で渡す
+              .remove([props.pet.imagePath]);
+            if (removeError) {
+              console.error("古い画像の削除に失敗しました:", removeError);
+            }
+          }
+        } catch (removeError) {
+          console.error("古い画像の削除中にエラーが発生しました:", removeError);
+        }
       } else {
         await createPet(requestData);
+        isPetSaved = true;
       }
-      isPetSaved = true;
       toast.success(
         isEdit ? "ペットを編集しました！" : "ペットを登録しました",
         { id: toastId },
