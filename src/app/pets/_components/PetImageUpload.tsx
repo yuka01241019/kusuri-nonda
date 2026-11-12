@@ -9,6 +9,8 @@ type PetImageUploadProps = {
   imagePath: string | null | undefined;
   // 選択した画像ファイル、または画像削除時のnullを親に渡す
   onChange: (value: File | null) => void;
+  // 画像の削除操作を親コンポーネントに通知する
+  onRemove: () => void;
   error?: string;
   disabled?: boolean;
   selectedFile: File | null;
@@ -17,6 +19,7 @@ type PetImageUploadProps = {
 export const PetImageUpload: React.FC<PetImageUploadProps> = ({
   imagePath,
   onChange,
+  onRemove,
   error,
   disabled,
   selectedFile,
