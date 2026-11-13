@@ -5,7 +5,7 @@ type FormButtonProps = {
   disabled?: boolean;
   icon?: React.ReactNode; //任意のアイコンを渡す
   showIcon?: boolean; //アイコンを表示するかどうか
-  variant?: "primary" | "secondary" | "outline";
+  variant?: "primary" | "secondary" | "outline" | "dangerText";
   onClick?: () => void;
   type?: "submit" | "button";
 };
@@ -25,6 +25,7 @@ export const FormButton: React.FC<FormButtonProps> = ({
     primary: "bg-darkPink text-white border border-textMain",
     secondary: "bg-submitBtn text-white border border-transparent",
     outline: "bg-white text-textMain border-textMain",
+    dangerText: "bg-transparent text-red-500 border border-textMain",
   }[variant];
   return (
     <button

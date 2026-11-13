@@ -13,11 +13,13 @@ import { useRouter } from "next/navigation";
 import toast from "react-hot-toast";
 import { PetImageUpload } from "./PetImageUpload";
 import PowIcon from "@assets/icons/auth/pow.svg";
+import TrashIcon from "@assets/icons/trash.svg";
 import { useState } from "react";
 import { useSupabaseSession } from "@/app/_hooks/useSupabaseSession";
 import { v4 as uuidv4 } from "uuid";
 import { supabase } from "@/utils/supabase";
 import { Pet } from "@/app/_types/pet/pet";
+import { AlertDialog } from "radix-ui";
 
 // 編集時にペット情報を渡す
 type PetFormProps = { mode: "create" } | { mode: "edit"; pet: Pet };
@@ -210,7 +212,7 @@ export const PetForm: React.FC<PetFormProps> = (props) => {
                   disabled={isSubmitting}
                 />
               </div>
-              <div className="mt-[26px] flex justify-center">
+              <div className="mt-[26px] flex flex-col items-center gap-3">
                 <FormButton
                   text={buttonText}
                   variant="primary"
@@ -218,6 +220,16 @@ export const PetForm: React.FC<PetFormProps> = (props) => {
                   showIcon={true}
                   disabled={isSubmitting}
                 />
+                {isEdit && (
+                  <FormButton
+                    type="button"
+                    text="ペットを削除する"
+                    variant="dangerText"
+                    icon={<TrashIcon className="text-red-500" />}
+                    showIcon={true}
+                    disabled={isSubmitting}
+                  />
+                )}
               </div>
             </form>
           </div>
