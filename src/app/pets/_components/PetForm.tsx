@@ -25,6 +25,8 @@ type PetFormProps = { mode: "create" } | { mode: "edit"; pet: Pet };
 export const PetForm: React.FC<PetFormProps> = (props) => {
   // 画像ファイルを管理
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
+  // 画像を削除する意思を管理するstate (初期値はfalse:削除予定なし true:保存時に画像を削除予定)
+  const [isImageRemoved, setIsImageRemoved] = useState(false);
   const { session } = useSupabaseSession();
   const router = useRouter();
   // modeによる出し分け
@@ -53,10 +55,20 @@ export const PetForm: React.FC<PetFormProps> = (props) => {
       imagePath: isEdit ? props.pet.imagePath : null,
     },
   });
+  // 画像削除用
+  const handleImageRemove = () => {
+    setIsImageRemoved(true);
+    setSelectedFile(null);
+  };
+  // フォーム送信処理用
   const onSubmit = async (data: PetFormData) => {
     const toastId = toast.loading(isEdit ? "保存中です…" : "登録中です…");
     // 登録時と編集時の両方に対応
     let imagePath: string | null = isEdit ? props.pet.imagePath : null;
+    // 画像が削除予定なら、DBに保存する画像パスを null にする
+    if (isImageRemoved) {
+      imagePath = null;
+    }
     let isPetSaved = false;
     // 新しくアップロードした画像のパス（登録・編集失敗時の削除用）
     let uploadedImagePath: string | null = null;
@@ -93,7 +105,8 @@ export const PetForm: React.FC<PetFormProps> = (props) => {
         await updatePet(props.pet.id, requestData);
         isPetSaved = true;
         try {
-          if (selectedFile && props.pet.imagePath) {
+          // 「新しい画像を選択した、または削除予定である」かつ「古い画像が存在する」場合だけ削除する
+          if ((selectedFile || isImageRemoved) && props.pet.imagePath) {
             const { error: removeError } = await supabase.storage
               .from("pet-imageurl")
               // removeは削除したいファイルのパスは配列で渡す
@@ -148,10 +161,16 @@ export const PetForm: React.FC<PetFormProps> = (props) => {
               <div className="w-full max-w-[390px]">
                 <PetImageUpload
                   imagePath={watch("imagePath")}
-                  onChange={(file) => setSelectedFile(file)}
+                  // 選択した画像を保持し、既存画像の削除予定を取り消す
+                  onChange={(file) => {
+                    setSelectedFile(file);
+                    setIsImageRemoved(false);
+                  }}
+                  onRemove={handleImageRemove}
                   error={errors.imagePath?.message}
                   disabled={isSubmitting}
                   selectedFile={selectedFile}
+                  isImageRemoved={isImageRemoved}
                 />
                 <input type="hidden" {...register("imagePath")} />
                 <FormInput

@@ -15,6 +15,8 @@ type PetImageUploadProps = {
   error?: string;
   disabled?: boolean;
   selectedFile: File | null;
+  // 画像が削除予定かどうか
+  isImageRemoved: boolean;
 };
 
 export const PetImageUpload: React.FC<PetImageUploadProps> = ({
@@ -24,6 +26,7 @@ export const PetImageUpload: React.FC<PetImageUploadProps> = ({
   error,
   disabled,
   selectedFile,
+  isImageRemoved,
 }) => {
   const fileInputRef = useRef<HTMLInputElement | null>(null);
   // ストレージから取得した登録済みの画像
@@ -85,8 +88,8 @@ export const PetImageUpload: React.FC<PetImageUploadProps> = ({
     const file = files[0];
     onChange(file); //親コンポーネントに画像ファイルを渡す
   };
-  // Imageのsrcはnullを受け取れないため、表示用URLをまとめて管理する
-  const displayUrl = previewUrl || imageUrl;
+  // 削除予定の場合は非表示にし、それ以外は新しい画像を優先して表示する
+  const displayUrl = isImageRemoved ? null : previewUrl || imageUrl;
 
   return (
     <div className="w-full flex flex-col items-center">
