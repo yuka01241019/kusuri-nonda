@@ -4,6 +4,7 @@ import { supabase } from "@/utils/supabase";
 import { useState, useEffect, useRef } from "react";
 import Image from "next/image";
 import CameraIcon from "@assets/icons/pet/camera.svg";
+import { DropdownMenu } from "radix-ui";
 
 type PetImageUploadProps = {
   imagePath: string | null | undefined;
@@ -78,11 +79,6 @@ export const PetImageUpload: React.FC<PetImageUploadProps> = ({
       URL.revokeObjectURL(objectUrl);
     };
   }, [selectedFile]);
-  const handleClick = () => {
-    if (!disabled) {
-      fileInputRef.current?.click();
-    }
-  };
   const handleImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const files = event.target.files;
     if (!files || files.length === 0) return;
@@ -95,10 +91,7 @@ export const PetImageUpload: React.FC<PetImageUploadProps> = ({
   return (
     <div className="w-full flex flex-col items-center">
       <div className="relative w-[110px] h-[110px] mb-2">
-        <div
-          className="w-full h-full rounded-full bg-[#E0E0E0] overflow-hidden border border-gray-500 cursor-pointer relative"
-          onClick={handleClick}
-        >
+        <div className="w-full h-full rounded-full bg-[#E0E0E0] overflow-hidden border border-gray-500 cursor-pointer relative">
           {displayUrl && (
             <Image
               src={displayUrl}
@@ -116,11 +109,45 @@ export const PetImageUpload: React.FC<PetImageUploadProps> = ({
           ref={fileInputRef}
           onChange={handleImageChange}
         />
-        <div
-          onClick={handleClick}
-          className="absolute bottom-0 right-0 p-1 cursor-pointer "
-        >
-          <CameraIcon />
+        <div className="absolute bottom-0 right-0">
+          {displayUrl ? (
+            <DropdownMenu.Root>
+              <DropdownMenu.Trigger asChild>
+                <button type="button" disabled={disabled}>
+                  <CameraIcon />
+                </button>
+              </DropdownMenu.Trigger>
+              <DropdownMenu.Portal>
+                <DropdownMenu.Content
+                  sideOffset={5}
+                  align="end"
+                  className="text-small text-textMain z-[70] w-[180px] space-y-2 rounded-[16px] bg-white p-1 shadow-lg"
+                >
+                  <DropdownMenu.Item
+                    onSelect={() => fileInputRef.current?.click()}
+                    className="cursor-pointer rounded-lg px-4 py-3 outline-none hover:bg-gray-100 focus:bg-gray-100"
+                  >
+                    画像を選択する
+                  </DropdownMenu.Item>
+                  <DropdownMenu.Separator className="my-1 h-px bg-gray-200" />
+                  <DropdownMenu.Item
+                    onSelect={onRemove}
+                    className="cursor-pointer rounded-lg px-4 py-3 text-red-500 outline-none hover:bg-red-50 focus:bg-red-50"
+                  >
+                    画像を削除する
+                  </DropdownMenu.Item>
+                </DropdownMenu.Content>
+              </DropdownMenu.Portal>
+            </DropdownMenu.Root>
+          ) : (
+            <button
+              type="button"
+              disabled={disabled}
+              onClick={() => fileInputRef.current?.click()}
+            >
+              <CameraIcon />
+            </button>
+          )}
         </div>
       </div>
       {error && <p className="text-sm text-red-500">{error}</p>}
