@@ -221,14 +221,37 @@ export const PetForm: React.FC<PetFormProps> = (props) => {
                   disabled={isSubmitting}
                 />
                 {isEdit && (
-                  <FormButton
-                    type="button"
-                    text="ペットを削除する"
-                    variant="dangerText"
-                    icon={<TrashIcon className="text-red-500" />}
-                    showIcon={true}
-                    disabled={isSubmitting}
-                  />
+                  <AlertDialog.Root>
+                    <AlertDialog.Trigger asChild>
+                      <FormButton
+                        type="button"
+                        text="ペットを削除する"
+                        variant="dangerText"
+                        icon={<TrashIcon className="text-red-500" />}
+                        showIcon={true}
+                        disabled={isSubmitting}
+                      />
+                    </AlertDialog.Trigger>
+                    <AlertDialog.Portal>
+                      <AlertDialog.Overlay className="fixed inset-0 z-[80] bg-black/20" />
+                      <AlertDialog.Content className="text-small fixed left-1/2 top-1/2 z-[90] w-[300px] -translate-x-1/2 -translate-y-1/2 rounded-[16px] bg-white p-6 shadow-lg">
+                        <AlertDialog.Title>
+                          {props.pet.name}を削除しますか？
+                        </AlertDialog.Title>
+                        <div className="mt-6 flex justify-center gap-4">
+                          <AlertDialog.Cancel className="rounded-lg bg-gray-200 px-4 py-2 hover:opacity-80">
+                            キャンセル
+                          </AlertDialog.Cancel>
+                          <AlertDialog.Action
+                            // onClick={handleDelete}
+                            className="rounded-lg bg-red-400 px-4 py-2 text-white hover:opacity-80"
+                          >
+                            削除する
+                          </AlertDialog.Action>
+                        </div>
+                      </AlertDialog.Content>
+                    </AlertDialog.Portal>
+                  </AlertDialog.Root>
                 )}
               </div>
             </form>
