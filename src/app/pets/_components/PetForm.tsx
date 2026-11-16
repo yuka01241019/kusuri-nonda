@@ -20,15 +20,21 @@ import { v4 as uuidv4 } from "uuid";
 import { supabase } from "@/utils/supabase";
 import { Pet } from "@/app/_types/pet/pet";
 import { AlertDialog } from "radix-ui";
+import { deletePet } from "../_lib/deletePet";
+import { useSWRConfig } from "swr";
+import { LoadingSpinner } from "@/app/_components/LoadingSpinner";
 
 // 編集時にペット情報を渡す
 type PetFormProps = { mode: "create" } | { mode: "edit"; pet: Pet };
 
 export const PetForm: React.FC<PetFormProps> = (props) => {
+  const { mutate } = useSWRConfig();
   // 画像ファイルを管理
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   // 画像を削除する意思を管理するstate (初期値はfalse:削除予定なし true:保存時に画像を削除予定)
   const [isImageRemoved, setIsImageRemoved] = useState(false);
+  // 削除処理中かどうかを管理
+  const [isDeleting, setIsDeleting] = useState(false);
   const { session } = useSupabaseSession();
   const router = useRouter();
   // modeによる出し分け
@@ -150,7 +156,54 @@ export const PetForm: React.FC<PetFormProps> = (props) => {
       }
     }
   };
-
+  const handleDelete = async () => {
+    // 編集モードではない場合、またはすでに削除処理中の場合に処理を終了
+    if (!isEdit || isDeleting) return;
+    // 削除処理中の操作を無効にする
+    setIsDeleting(true);
+    const toastId = toast.loading("削除中です…");
+    try {
+      await deletePet(props.pet.id);
+      try {
+        // DBに登録済みの画像の存在確認
+        if (props.pet.imagePath) {
+          const { error } = await supabase.storage
+            .from("pet-imageurl")
+            .remove([props.pet.imagePath]);
+          if (error) {
+            console.error("画像の削除に失敗しました:", error);
+          }
+        }
+      } catch (error) {
+        console.error("画像の削除中に例外が発生しました:", error);
+      }
+      try {
+        await mutate("/api/pets");
+      } catch (error) {
+        console.error(
+          "ペット一覧のキャッシュ更新中に例外が発生しました:",
+          error,
+        );
+      }
+      toast.success("ペットを削除しました！", { id: toastId });
+      router.replace("/dashboard");
+    } catch (error) {
+      if (error instanceof Error) {
+        toast.error(error.message, { id: toastId });
+      } else {
+        toast.error("予期せぬエラーが発生しました", { id: toastId });
+      }
+      // 削除に失敗した場合は再び操作できるようにする
+      setIsDeleting(false);
+    }
+  };
+  if (isDeleting) {
+    return (
+      <div className="flex flex-1 flex-col bg-lightPink pt-10">
+        <LoadingSpinner />
+      </div>
+    );
+  }
   return (
     <div className="bg-lightPink min-h-screen flex justify-center items-start py-10">
       <div className="w-full flex justify-center text-textMain">
@@ -170,7 +223,7 @@ export const PetForm: React.FC<PetFormProps> = (props) => {
                   }}
                   onRemove={handleImageRemove}
                   error={errors.imagePath?.message}
-                  disabled={isSubmitting}
+                  disabled={isSubmitting || isDeleting}
                   selectedFile={selectedFile}
                   isImageRemoved={isImageRemoved}
                 />
@@ -180,14 +233,14 @@ export const PetForm: React.FC<PetFormProps> = (props) => {
                   label="名前"
                   {...register("name")}
                   error={errors.name?.message}
-                  disabled={isSubmitting}
+                  disabled={isSubmitting || isDeleting}
                 />
                 <PetFormSelect
                   label="ペットの種類"
                   options={["いぬ", "ねこ", "うさぎ", "ハムスター", "その他"]}
                   {...register("species")}
                   error={errors.species?.message}
-                  disabled={isSubmitting}
+                  disabled={isSubmitting || isDeleting}
                 />
                 <PetFormSelect
                   label="性別"
@@ -195,21 +248,21 @@ export const PetForm: React.FC<PetFormProps> = (props) => {
                   options={["おとこのこ♂", "おんなのこ♀"]}
                   {...register("gender")}
                   error={errors.gender?.message}
-                  disabled={isSubmitting}
+                  disabled={isSubmitting || isDeleting}
                 />
                 <PetFormDateInput
                   label="誕生日"
                   value={watch("birthday")}
                   onChange={(val) => setValue("birthday", val)}
                   error={errors.birthday?.message}
-                  disabled={isSubmitting}
+                  disabled={isSubmitting || isDeleting}
                 />
                 <PetFormDateInput
                   label="お迎えした日"
                   value={watch("adoptedAt")}
                   onChange={(val) => setValue("adoptedAt", val)}
                   error={errors.adoptedAt?.message}
-                  disabled={isSubmitting}
+                  disabled={isSubmitting || isDeleting}
                 />
               </div>
               <div className="mt-[26px] flex flex-col items-center gap-3">
@@ -218,7 +271,7 @@ export const PetForm: React.FC<PetFormProps> = (props) => {
                   variant="primary"
                   icon={<PowIcon />}
                   showIcon={true}
-                  disabled={isSubmitting}
+                  disabled={isSubmitting || isDeleting}
                 />
                 {isEdit && (
                   <AlertDialog.Root>
@@ -229,7 +282,7 @@ export const PetForm: React.FC<PetFormProps> = (props) => {
                         variant="dangerText"
                         icon={<TrashIcon className="text-red-500" />}
                         showIcon={true}
-                        disabled={isSubmitting}
+                        disabled={isSubmitting || isDeleting}
                       />
                     </AlertDialog.Trigger>
                     <AlertDialog.Portal>
@@ -238,12 +291,16 @@ export const PetForm: React.FC<PetFormProps> = (props) => {
                         <AlertDialog.Title>
                           {props.pet.name}を削除しますか？
                         </AlertDialog.Title>
+                        <AlertDialog.Description className="mt-3 text-sm text-gray-500 leading-relaxed">
+                          関連する服薬スケジュールや服薬記録も削除されます。
+                          この操作は取り消せません。
+                        </AlertDialog.Description>
                         <div className="mt-6 flex justify-center gap-4">
                           <AlertDialog.Cancel className="rounded-lg bg-gray-200 px-4 py-2 hover:opacity-80">
                             キャンセル
                           </AlertDialog.Cancel>
                           <AlertDialog.Action
-                            // onClick={handleDelete}
+                            onClick={handleDelete}
                             className="rounded-lg bg-red-400 px-4 py-2 text-white hover:opacity-80"
                           >
                             削除する
