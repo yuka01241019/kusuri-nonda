@@ -31,3 +31,8 @@ export type PutPetResponse = {
   message: string;
   pet: Pet;
 };
+
+// DELETEのレスポンス
+export type DeletePetResponse = {
+  message: string;
+};
