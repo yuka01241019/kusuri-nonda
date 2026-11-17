@@ -66,7 +66,7 @@ export const GET = async (request: NextRequest) => {
         user: { supabaseUserId: data.user.id },
       },
       select: { id: true, name: true, color: true },
-      orderBy: { createdAt: "desc" },
+      orderBy: { createdAt: "asc" },
     });
     return NextResponse.json<GetFamiliesResponse>(
       { message: "家族一覧を取得しました", families },
