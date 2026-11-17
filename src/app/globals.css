@@ -22,3 +22,8 @@ html {
 body {
   width: 100vw;
 }
+
+/* ダイアログ表示中もstickyによるヘッダーの固定を維持する */
+html body[data-scroll-locked] {
+  overflow: clip !important;
+}

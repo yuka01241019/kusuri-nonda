@@ -35,8 +35,7 @@ export const PetInfo: React.FC<PetInfoProps> = ({ id }) => {
     <div className="bg-lightPink text-textMain text-small pt-10">
       <div className="relative w-full max-w-[350px] sm:max-w-[390px] md:max-w-[400px] lg:max-w-[420px] mx-auto flex items-start gap-4">
         <div className="absolute top-1 right-0">
-          {/* 仮アドレス */}
-          <Link href="/" aria-label="ペット情報を編集">
+          <Link href={`/pets/${id}/edit`} aria-label="ペット情報を編集">
             <EditIcon />
           </Link>
         </div>

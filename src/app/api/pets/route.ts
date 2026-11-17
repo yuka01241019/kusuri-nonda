@@ -11,7 +11,7 @@ export type CreatePetRequest = {
   gender: "おとこのこ♂" | "おんなのこ♀" | null;
   birthday: string | null;
   adoptedAt: string | null;
-  imagePath?: string;
+  imagePath?: string | null;
 };
 
 //ペット登録API

@@ -2,29 +2,37 @@
 
 import { supabase } from "@/utils/supabase";
 import { useState, useEffect, useRef } from "react";
-import { v4 as uuidv4 } from "uuid";
 import Image from "next/image";
-import toast from "react-hot-toast";
 import CameraIcon from "@assets/icons/pet/camera.svg";
-import { useSupabaseSession } from "@/app/_hooks/useSupabaseSession";
+import { DropdownMenu } from "radix-ui";
 
 type PetImageUploadProps = {
   imagePath: string | null | undefined;
-  onChange: (value: string) => void;
+  // 選択した画像ファイル、または画像削除時のnullを親に渡す
+  onChange: (value: File | null) => void;
+  // 画像の削除操作を親コンポーネントに通知する
+  onRemove: () => void;
   error?: string;
   disabled?: boolean;
+  selectedFile: File | null;
+  // 画像が削除予定かどうか
+  isImageRemoved: boolean;
 };
 
 export const PetImageUpload: React.FC<PetImageUploadProps> = ({
   imagePath,
   onChange,
+  onRemove,
   error,
   disabled,
+  selectedFile,
+  isImageRemoved,
 }) => {
-  const { session } = useSupabaseSession();
   const fileInputRef = useRef<HTMLInputElement | null>(null);
-  const [uploading, setUploading] = useState(false);
+  // ストレージから取得した登録済みの画像
   const [imageUrl, setImageUrl] = useState<string | null>(null);
+  // 新しく選択した画像の一時URL
+  const [previewUrl, setPreviewUrl] = useState<string | null>(null);
   //初期表示 or imagePathが変わった時にURLを再取得
   useEffect(() => {
     if (!imagePath) {
@@ -59,53 +67,37 @@ export const PetImageUpload: React.FC<PetImageUploadProps> = ({
       }
     };
   }, [imagePath]);
-  const handleClick = () => {
-    if (!disabled) {
-      fileInputRef.current?.click();
+
+  // プレビュー用
+  useEffect(() => {
+    if (!selectedFile) {
+      setPreviewUrl(null);
+      return;
     }
-  };
-  const handleImageChange = async (
-    event: React.ChangeEvent<HTMLInputElement>,
-  ) => {
+    // 選択した画像ファイルから一時URLを作成し、解放処理でも使えるよう変数に保存する
+    const objectUrl = URL.createObjectURL(selectedFile);
+    // 作成した一時URLをstateに保存して、プレビュー表示に使う
+    setPreviewUrl(objectUrl);
+    return () => {
+      URL.revokeObjectURL(objectUrl);
+    };
+  }, [selectedFile]);
+  const handleImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const files = event.target.files;
     if (!files || files.length === 0) return;
     const file = files[0];
-    // userIDを取得
-    const userId = session?.user.id;
-    // userIdが存在しない場合はreturn
-    if (!userId) {
-      return;
-    }
-    // あればfilePathを作成して次の処理へ進む
-    const filePath = `${userId}/${uuidv4()}`;
-    const toastId = toast.loading("画像をアップロード中…");
-    setUploading(true);
-
-    const { error: uploadError } = await supabase.storage
-      .from("pet-imageurl")
-      .upload(filePath, file);
-    setUploading(false);
-
-    if (uploadError) {
-      toast.error("画像のアップロードに失敗しました", { id: toastId });
-      console.error(uploadError);
-      return;
-    }
-    // アップロード成功 → 親に画像の保存先を渡す
-    onChange(filePath); //imagePathを親に返す
-    // 成功メッセージを表示
-    toast.success("画像をアップロードしました！", { id: toastId });
+    onChange(file); //親コンポーネントに画像ファイルを渡す
   };
+  // 削除予定の場合は非表示にし、それ以外は新しい画像を優先して表示する
+  const displayUrl = isImageRemoved ? null : previewUrl || imageUrl;
+
   return (
     <div className="w-full flex flex-col items-center">
       <div className="relative w-[110px] h-[110px] mb-2">
-        <div
-          className="w-full h-full rounded-full bg-[#E0E0E0] overflow-hidden border border-gray-500 cursor-pointer relative"
-          onClick={handleClick}
-        >
-          {imageUrl && (
+        <div className="w-full h-full rounded-full bg-[#E0E0E0] overflow-hidden border border-gray-500 cursor-pointer relative">
+          {displayUrl && (
             <Image
-              src={imageUrl}
+              src={displayUrl}
               alt="pet image"
               fill
               unoptimized
@@ -120,11 +112,45 @@ export const PetImageUpload: React.FC<PetImageUploadProps> = ({
           ref={fileInputRef}
           onChange={handleImageChange}
         />
-        <div
-          onClick={handleClick}
-          className="absolute bottom-0 right-0 p-1 cursor-pointer "
-        >
-          <CameraIcon />
+        <div className="absolute bottom-0 right-0">
+          {displayUrl ? (
+            <DropdownMenu.Root>
+              <DropdownMenu.Trigger asChild>
+                <button type="button" disabled={disabled}>
+                  <CameraIcon />
+                </button>
+              </DropdownMenu.Trigger>
+              <DropdownMenu.Portal>
+                <DropdownMenu.Content
+                  sideOffset={5}
+                  align="end"
+                  className="text-small text-textMain z-[70] w-[180px] space-y-2 rounded-[16px] bg-white p-1 shadow-lg"
+                >
+                  <DropdownMenu.Item
+                    onSelect={() => fileInputRef.current?.click()}
+                    className="cursor-pointer rounded-lg px-4 py-3 outline-none hover:bg-gray-100 focus:bg-gray-100"
+                  >
+                    画像を選択する
+                  </DropdownMenu.Item>
+                  <DropdownMenu.Separator className="my-1 h-px bg-gray-200" />
+                  <DropdownMenu.Item
+                    onSelect={onRemove}
+                    className="cursor-pointer rounded-lg px-4 py-3 text-red-500 outline-none hover:bg-red-50 focus:bg-red-50"
+                  >
+                    画像を削除する
+                  </DropdownMenu.Item>
+                </DropdownMenu.Content>
+              </DropdownMenu.Portal>
+            </DropdownMenu.Root>
+          ) : (
+            <button
+              type="button"
+              disabled={disabled}
+              onClick={() => fileInputRef.current?.click()}
+            >
+              <CameraIcon />
+            </button>
+          )}
         </div>
       </div>
       {error && <p className="text-sm text-red-500">{error}</p>}

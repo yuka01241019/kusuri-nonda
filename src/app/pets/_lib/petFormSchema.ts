@@ -20,8 +20,8 @@ export const petFormSchema = z.object({
     z.string().min(1, "日付を選択してください"),
     z.null(),
   ]),
-
-  imagePath: z.string().optional(),
+// 画像なしを null で扱えるよう変更
+  imagePath: z.string().nullable().optional(),
 });
 
 export type PetFormData = z.infer<typeof petFormSchema>;
