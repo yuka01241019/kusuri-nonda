@@ -3,7 +3,10 @@ import { prisma } from "@/app/_lib/prisma";
 import { handleApiError } from "@/utils/handleApiError";
 import { supabase } from "@/utils/supabase";
 import { familyFormSchema } from "@/app/_schemas/family/familySchema";
-import { PostFamilyResponse } from "@/app/_types/family/family";
+import {
+  GetFamiliesResponse,
+  PostFamilyResponse,
+} from "@/app/_types/family/family";
 
 // 家族新規登録API
 export const POST = async (request: NextRequest) => {
@@ -40,6 +43,33 @@ export const POST = async (request: NextRequest) => {
     });
     return NextResponse.json<PostFamilyResponse>(
       { message: "家族を登録しました", family },
+      { status: 200 },
+    );
+  } catch (error) {
+    return handleApiError(error);
+  }
+};
+
+// 家族一覧取得API
+export const GET = async (request: NextRequest) => {
+  const token = request.headers.get("Authorization") ?? "";
+  const { data, error } = await supabase.auth.getUser(token);
+  if (error || !data?.user) {
+    return NextResponse.json(
+      { message: "認証に失敗しました" },
+      { status: 401 },
+    );
+  }
+  try {
+    const families = await prisma.family.findMany({
+      where: {
+        user: { supabaseUserId: data.user.id },
+      },
+      select: { id: true, name: true, color: true },
+      orderBy: { createdAt: "desc" },
+    });
+    return NextResponse.json<GetFamiliesResponse>(
+      { message: "家族一覧を取得しました", families },
       { status: 200 },
     );
   } catch (error) {
