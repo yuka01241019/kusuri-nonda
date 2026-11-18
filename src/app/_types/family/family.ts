@@ -22,3 +22,8 @@ export type PutFamilyResponse = {
   message: string;
   family: Family;
 };
+
+// DELETEのレスポンス
+export type DeleteFamilyResponse = {
+  message: string;
+};
