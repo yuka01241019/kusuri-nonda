@@ -16,3 +16,9 @@ export type GetFamiliesResponse = {
   message: string;
   families: Family[];
 };
+
+// PUTのレスポンス
+export type PutFamilyResponse = {
+  message: string;
+  family: Family;
+};
