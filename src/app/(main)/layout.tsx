@@ -4,7 +4,7 @@ export default function MainLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
   return (
-    <div className="flex min-h-dvh flex-col">
+    <div className="flex min-h-dvh flex-col bg-lightPink">
       {children}
       <Footer />
     </div>
