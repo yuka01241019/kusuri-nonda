@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import { AuthFormData } from "../_lib/authSchema";
 import MailIcon from "@assets/icons/auth/mail.svg";
 import LockIcon from "@assets/icons/auth/lock.svg";
-import PowIcon from "@assets/icons/auth/pow.svg";
+import PawIcon from "@assets/icons/paw.svg";
 import { FormInput } from "../_components/FormInput";
 import { FormButton } from "../_components/FormButton";
 
@@ -82,7 +82,7 @@ export const AuthForm: React.FC<AuthFormProps> = ({
                 <FormButton
                   text={buttonText}
                   variant="primary"
-                  icon={<PowIcon />}
+                  icon={<PawIcon />}
                   showIcon={true}
                   disabled={isSubmitting}
                 />

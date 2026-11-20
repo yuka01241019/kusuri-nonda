@@ -12,7 +12,7 @@ import { updatePet } from "../_lib/updatePet";
 import { useRouter } from "next/navigation";
 import toast from "react-hot-toast";
 import { PetImageUpload } from "./PetImageUpload";
-import PowIcon from "@assets/icons/auth/pow.svg";
+import PawIcon from "@assets/icons/paw.svg";
 import TrashIcon from "@assets/icons/trash.svg";
 import { useState } from "react";
 import { useSupabaseSession } from "@/app/_hooks/useSupabaseSession";
@@ -269,7 +269,7 @@ export const PetForm: React.FC<PetFormProps> = (props) => {
                 <FormButton
                   text={buttonText}
                   variant="primary"
-                  icon={<PowIcon />}
+                  icon={<PawIcon />}
                   showIcon={true}
                   disabled={isSubmitting || isDeleting}
                 />
