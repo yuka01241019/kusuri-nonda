@@ -1,7 +1,7 @@
 "use client";
 
 import { useRouteGuard } from "@/app/_hooks/useRouteGuard";
-import MedicationList from "./_components/MedicationList";
+import { MedicationList } from "./_components/MedicationList";
 
 const MedicationPage: React.FC = () => {
   useRouteGuard();

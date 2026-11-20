@@ -8,7 +8,7 @@ import { FormButton } from "@/app/_components/FormButton";
 import AddIcon from "@assets/icons/add.svg";
 import { LoadingSpinner } from "@/app/_components/LoadingSpinner";
 
-const MedicationList = () => {
+export const MedicationList :React.FC= () => {
   const [currentPage, setCurrentPage] = useState(1);
   const router = useRouter();
   const { data, isLoading, mutate } = useFetch<GetMedicationsResponse>(
@@ -100,5 +100,3 @@ const MedicationList = () => {
     </div>
   );
 };
-
-export default MedicationList;
