@@ -6,8 +6,12 @@ import { LoadingSpinner } from "@/app/_components/LoadingSpinner";
 import { FamilyMemberItem } from "./FamilyMemberItem";
 import { FormButton } from "@/app/_components/FormButton";
 import AddFamilyIcon from "@assets/icons/family/addFamily.svg";
+import { useState } from "react";
+import { FamilyMemberModal } from "./FamilyMemberModal";
 
 export const FamilyMemberList: React.FC = () => {
+  // モーダル開閉管理
+  const [isModalOpen, setIsModalOpen] = useState(false);
   const { data, isLoading, mutate } =
     useFetch<GetFamiliesResponse>(`/api/families`);
   // SWRから家族一覧を取り出す。まだ取得できていなければ、ひとまず空の配列にする
@@ -46,8 +50,13 @@ export const FamilyMemberList: React.FC = () => {
               variant="secondary"
               showIcon={true}
               icon={<AddFamilyIcon />}
+              onClick={() => setIsModalOpen(true)}
             />
           </div>
+          <FamilyMemberModal
+            isOpen={isModalOpen}
+            onClose={() => setIsModalOpen(false)}
+          />
         </div>
       </div>
     </div>
