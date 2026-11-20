@@ -7,7 +7,7 @@ const NewPetPage: React.FC = () => {
   useRouteGuard();
   return (
     <div>
-      <PetForm />
+      <PetForm mode="create" />
     </div>
   );
 };
