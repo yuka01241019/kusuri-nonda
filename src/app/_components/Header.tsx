@@ -15,7 +15,7 @@ export const Header: React.FC = () => {
         <Logo className=" w-auto fill-white" />
       </Link>
       {/* 右側アイコン */}
-      <Link href="/family" className="absolute right-4 top-2 p-2">
+      <Link href="/families" className="absolute right-4 top-2 p-2">
         <HeaderFamily className="" />
       </Link>
     </header>
