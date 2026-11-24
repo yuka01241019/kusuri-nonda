@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/app/_lib/prisma";
 import { handleApiError } from "@/utils/handleApiError";
 import { supabase } from "@/utils/supabase";
-import { familyFormSchema } from "@/app/_schemas/family/familySchema";
+import { familyFormSchema } from "@/app/_schemas/family/familyFormSchema";
 import {
   GetFamiliesResponse,
   PostFamilyResponse,
